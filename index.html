@@ -95,6 +95,19 @@
                             font-size:1.5rem;
                             color:#ffaa00;
                         }
+
+                    #red{
+                            font-family:ISOCPEUR;
+                            font-size:1.5rem;
+                            color:#ff0000;
+                        }
+
+                   #blue{
+                            font-family:ISOCPEUR;
+                            font-size:1.5rem;
+                            color:#4ba8ff;
+                        }
+
                .imgright{
                             float:right;
                             margin-right:30px;
@@ -232,22 +245,42 @@
         <p class="txt_left"><span>IPR</span> - промежуточный рендеринг для настройки освещения<br/>
             и для настройки материалов  (В этом режиме не работает Camera Correction)</p>
 
+        <div class="rectmin txt_cntr_mddls">Camera move</div>
+        <p class="txt_left">Объект должен быть отцентрован во вьюпорте при помощи кнопок <span>F L R B</span>.<br/>
+            По-умолчанию нельзя менять FOV и углы вращения камер, <br/>если в этом есть необходимость - 
+            согласовываем с менеджером проекта.</p> 
+        <img src="img\camera_move.png"width="1100"style="position:relative;">
+        
         <div class="rectmin txt_cntr_mddls">Grid</div>
         <img src="img\grid.png"class="imgright">
 
         <p class="txt_left"> Объект должен быть отцентрован во вьюпорте при помощи сетки.<br/>
             Объект должен быть по центру, одного масштаба на всех видах <br/>и не выходить за пределы 
             границ сетки, за исключением крупно- <br/>габаритных объектов (Диван, Шкаф, Ковер и.т.п)</p> 
-        
-        <img src="img/grid_scr.png"width="500"style="position:relative;left:50px;">
+        <img src="img\grid_scr.png"width="500"style="position:relative;left:50px;">
    
+        <div class="rectmin txt_cntr_mddls">Product type</div>
+        <img src="img\product_type_empty.png"class="imgright">
+
+
+        <p class="txt_left"> Необходимо переименовывать все камеры в сцене <br/>
+            в соответствии с типом изделия<br/>
+            Для этого в красное поле <span>PRODUCT TYPE</span> копируем тип изделия  <br/>
+            из названия архива и нажимаем кнопку <span>“Rename Cameras”</span></p>
+        <img src="img\product_type_fill.png"class="imgright">
+        <p class="txt_left"> Например:  <br/>
+        <span>162985469-WALMART-<span id="blue">COFFEE_TABLE</span>_BIG_JOE-BLACK</span><br/>
+        <span>UMA9891-HAYNEEDLE-<span id="blue">WALL_MIRROR</span>_DECMODE-BRONZE</span><br/>
+        <span>854001-GENERIC-<span id="blue">BOOKCASE</span>_BIBGEN_NADINE-BLACK_NATURAL</span><br/>
+        Недопустимо использование "<span id="red">-</span>", например <span id="red">COFFEE-TABLE</span></span></p> 
+
         <br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/>
 
         <p style="position: relative; left: 340px;"><span>(Продолжение следует...)</span></p><br/>
    
     </div>
 
-    <footer class="footer txt_cntr_mddls"id="footer">kofein3d@gmail.com</footer>
+    <footer class="footer txt_cntr_mddls"id="footer">16.11.2023 kofein3d@gmail.com</footer>
 
     </body>
     </html> 
