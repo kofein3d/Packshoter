@@ -1,142 +1,187 @@
 <!DOCTYPE html>
-    <html lang="en">
-        <head>
-            <meta charset="UTF-8">
-            <meta name="Packshoter manual"content="width=device-width,initial-scale=1">
-            <title>Packshoter manual</title>
-            <style>
+	<html lang="en">
+		<head>
+			<meta charset="UTF-8">
+			<meta name="Packshoter manual"content="width=device-width,initial-scale=1">
+			<title>Packshoter manual</title>
+			<style>
+			 @font-face {
+							font-family:ISOCPEUR; 
+							src:url(img/isocpeur.ttf);
+						}
+					body{
+							background:#111111;
+						}
+				.content{
+							max-width:1100px;
+							min-width:1100px;
+							min-height:4300px;
+							margin:auto;
+							background:#333333;
+							padding:0px;
+						}
+				   .rect{
+							width:95%;
+							height:80px;
+							border:0px solid;
+							margin:auto;
+							background:#262626;
+						}
+				.rectbig{
+							width:95%;
+							height:400px;
+							border:0px solid;
+							margin:auto;
+							background:#333333;
+						}
+			  .rectsmall{
+							width:95%;
+							height:6px;
+							border:0px solid;
+							margin:auto;
+							background:#262626;
+						}
+			    .rectmin{
+							width:95%;
+							height:60px;
+							margin-top:40px;
+							margin-bottom:40px;
+							margin-left:2.5%;
+							border:0px solid;
+							background:#262626;
+						}
+			   .rectminy{
+							width:95%;
+							height:8px;
+							margin-top:40px;
+							margin-bottom:40px;
+							margin-left:2.5%;
+							border:0px solid;
+							background:#262626;
+						}
+		  .txt_cntr_mddl{
+							color:#c8c8c8;
+							font-family:ISOCPEUR;
+							font-size:3rem;
+							text-align:center;
+							line-height:80px;
+						}
+		 .txt_cntr_mddls{
+							color:#c8c8c8;
+							font-family:ISOCPEUR;
+							font-size:2.5rem;
+							text-align:center;
+							line-height:55px;
+						}
+			  .imgCenter{
+							text-align:center;
+						}
+			   .txt_left{
+							color:#c8c8c8;
+							font-family:ISOCPEUR;
+							font-size:1.5rem;
+							line-height:36px;
+							padding-left:60px
+						}
+					   p{
+							font-family:ISOCPEUR;
+							font-size:1.5rem;
+							color:#c8c8c8;
+							padding-left:100px
+						}
+					span{
+							font-family:ISOCPEUR;
+							font-size:1.5rem;
+							color:#ffaa00;
+						}
+					#red{
+							font-family:ISOCPEUR;
+							font-size:1.5rem;
+							color:#ff0000;
+						}
+				   #blue{
+							font-family:ISOCPEUR;
+							font-size:1.5rem;
+							color:#4ba8ff;
+						}
+				  #green{
+							font-family:ISOCPEUR;
+							font-size:1.5rem;
+							color:#00c563;
+						}
+			   .imgright{
+							float:right;
+							margin-right:30px;
+							margin-top:-15px;
+						}
+				 .footer{
+							background:#555555;
+							width:100%;
+							max-width:1100px;
+							min-width:1100px;
+							font-family:ISOCPEUR;
+							font-size:1.5rem;
+							color:#222222;
+							margin:auto;
+							padding:3px;
+							box-sizing:border-box;
+						}
+			</style>
+		</head>
+	<body>
 
-             @font-face {
-                            font-family:ISOCPEUR; 
-                            src:url(img/isocpeur.ttf);
-                        }
-                   body {
-                            background:#111111;
-                        }
-               .content {
-                            max-width:1100px;
-                            min-width:1100px;
-                            min-height:4300px;
-                            margin:auto;
-                            background:#333333;
-                            padding:0px;
-                        }
-                   .rect{
-                            width:95%;
-                            height:80px;
-                            border:0px solid;
-                            margin:auto;
-                            background:#262626;
-                        }
-                .rectbig{
-                            width:95%;
-                            height:400px;
-                            border:0px solid;
-                            margin:auto;
-                            background:#333333;
-                        }
-              .rectsmall{
-                            width:95%;
-                            height:40px;
-                            border:0px solid;
-                            margin:auto;
-                            background:#333333;
-                        }
-                .rectmin{
-                            width:95%;
-                            height:60px;
-                            margin-top:40px;
-                            margin-bottom:40px;
-                            margin-left:2.5%;
-                            border:0px solid;
-                            background:#262626;
-                        }
-               .rectminy{
-                            width:95%;
-                            height:8px;
-                            margin-top:40px;
-                            margin-bottom:40px;
-                            margin-left:2.5%;
-                            border:0px solid;
-                            background:#262626;
-                        }
-          .txt_cntr_mddl{
-                            color:#c8c8c8;
-                            font-family:ISOCPEUR;
-                            font-size:3rem;
-                            text-align:center;
-                            line-height:80px;
-                        }
-         .txt_cntr_mddls{
-                            color:#c8c8c8;
-                            font-family:ISOCPEUR;
-                            font-size:2.5rem;
-                            text-align:center;
-                            line-height:55px;
-                        }
-             .imgCenter {
-                            text-align:center;
-                        }
-               .txt_left{
-                            color:#c8c8c8;
-                            font-family:ISOCPEUR;
-                            font-size:1.5rem;
-                            line-height:36px;
-                            padding-left:60px
-                        }
-                       p{
-                            font-family:ISOCPEUR;
-                            font-size:1.5rem;
-                            color:#c8c8c8;
-                            padding-left:100px
-                        }
-                    span{
-                            font-family:ISOCPEUR;
-                            font-size:1.5rem;
-                            color:#ffaa00;
-                        }
+		<div class="content">
 
-                    #red{
-                            font-family:ISOCPEUR;
-                            font-size:1.5rem;
-                            color:#ff0000;
-                        }
+		<h1><img src="img/logo.png"width="1100"></h1>
+		<div class="rect txt_cntr_mddl">PACKSHOTER</div>
+		<h2 class="imgCenter"><img src="img/interface_a.png"width="450"></h2>
+		<div class="rectmin txt_cntr_mddls">Версия 4.20 (changelog)</div>
 
-                   #blue{
-                            font-family:ISOCPEUR;
-                            font-size:1.5rem;
-                            color:#4ba8ff;
-                        }
+		<p style="position: relative; left: 265px;"><span>ИЗМЕНЕНИЯ В СТРУКТУРЕ НАЗВАНИЙ!</span></p>
+		<p style="position: relative; left: 350px;">(что изменилось)</p>
 
-               .imgright{
-                            float:right;
-                            margin-right:30px;
-                            margin-top:-15px;
-                        }
-                 .footer{
-                            background:#555555;
-                            width:100%;
-                            max-width:1100px;
-                            min-width:1100px;
-                            font-family:ISOCPEUR;
-                            font-size:1.5rem;
-                            color:#222222;
-                            margin:auto;
-                            padding:3px;
-                            box-sizing:border-box;
-                        }
-            </style>
+		<p><span id="green">Базовое название</span> (Название архива, название сцены, название превью, и экспортов):<br/>
 
-        </head>
+			Тип изделия отделяем от названия изделия и убираем описание (цвет)<br/>
+			<span id="red"> Было:</span>&nbsp;&nbsp;&nbsp;<span>84848484-NFINITE-PENDANT_LAMP_EGLO-BLACK</span>&nbsp;(три тире)<br/>
+			<span id="red"> Стало:</span>&nbsp; <span id="blue">84848484-NFINITE-PENDANT_LAMP-EGLO</span>&nbsp;(три тире)</p>
 
-    <body>
+		<p><span id="green">Название базового хелпера</span><br/>
 
-        <div class="content">
+			должно соответствовать базовому названию (названию сцены)<br/>
+			<span id="red"> Было:</span>&nbsp;&nbsp;&nbsp;<span>84848484-NFINITE-PENDANT_LAMP_EGLO</span>&nbsp;(два тире)<br/>
+			<span id="red"> Стало:</span>&nbsp; <span id="blue">84848484-NFINITE-PENDANT_LAMP-EGLO</span>&nbsp;(три тире)</p>
 
-        <h1><img src="img/logo.png"width="1100"></h1>
-        <div class="rect txt_cntr_mddl">PACKSHOTER</div>
-        <h2 class="imgCenter"><img src="img/interface_a.png"width="450"></h2>
-        <div class="rectmin txt_cntr_mddls">Версия 4.10 (changelog)</div>
+		<p><span id="green">Названия геометрии</span><br/>
+
+			К базовому названию добавляем тип материала (-wood_a)<br/>
+			<span id="red"> Было:</span>&nbsp;&nbsp;&nbsp;<span>84848484-NFINITE-PENDANT_LAMP_EGLO-wood_a</span>&nbsp;(три тире)<br/>
+			<span id="red"> Стало:</span>&nbsp; <span id="blue">84848484-NFINITE-PENDANT_LAMP-EGLO-wood_a</span>&nbsp;(четыре тире)</p>
+
+		<p><span id="green">Названия материалов</span><br/>
+
+			Убираем "Mat-" и к базовому названию добавляем тип материала (-wood_a)<br/>
+			<span id="red"> Было:</span>&nbsp;&nbsp;&nbsp;<span>Mat-84848484-NFINITE-PENDANT_LAMP_EGLO-wood_a</span>&nbsp;(четыре тире)<br/>
+			<span id="red"> Стало:</span>&nbsp; <span id="blue">84848484-NFINITE-PENDANT_LAMP-EGLO-wood_a</span>&nbsp;(четыре тире)</p>
+
+		<p><span id="green">Названия текстур</span><br/>
+
+			К базовому названию добавляем  тип материала с названием карты (-wood_a_D)<br/>
+			<span id="red"> Было:</span>&nbsp;&nbsp;&nbsp;<span>84848484-NFINITE-PENDANT_LAMP_EGLO-wood_a_D.png</span>&nbsp;(три тире)<br/>
+			<span id="red"> Стало:</span>&nbsp; <span id="blue">84848484-NFINITE-PENDANT_LAMP-EGLO-wood_a_D.png</span>&nbsp;(четыре тире)</p>
+
+			<div class="rectsmall"></div>
+
+		<p> - В установщик добавлена новая версия <span>MTL 2.8</span><br/>
+			- В установщик добавлен скрипт переименования сцен со старыми названиями <span>"Nom_renam"</span><br/>
+
+			&nbsp;&nbsp;&nbsp;&nbsp;Для использования <span>Packshoter 4.20</span> со старыми сценами<br/>
+			&nbsp;&nbsp;&nbsp;&nbsp;сначала нужно запустить <span>"Nom_renam"</span><br/>
+			&nbsp;&nbsp;&nbsp;&nbsp;и только после успешного переименования запустить <span>Packshoter 4.20</span><br/><br/>
+			&nbsp;&nbsp;<span>MTL 2.8</span> и <span>Nom_renam</span> доступны из меню Packshoter (или выводим кнопки на тулбар)
+			</p><br/><br/><br/><br/><br/><br/>
+		
+		<div class="rectmin txt_cntr_mddls">Версия 4.10 (changelog)</div>
 
 		<p> 1 - Изменена template сцена, актуальный template - <span>PACKSHOOTER-TEMPLATE-V6.45</span><br/>
 			&nbsp;&nbsp;&nbsp;&nbsp;<span id="red">Все предыдущие версии Packshoter неприемлемы!</span><br/>
@@ -172,7 +217,7 @@
 		<p> 7 - Вернул возможность двигать TOP камеру вперед-назад <br/></p>
 
 		<p> 8 - Добавлены дополнительные проверки в "Checking and Archiving"
-		</p><br/><br/><br/><br/><br/><br/><br/><br/><br/>
+		</p><br/><br/><br/><br/><br/><br/>
 
 		<div class="rectmin txt_cntr_mddls">ВНИМАНИЕ!</div>
 
@@ -184,9 +229,6 @@
 			Кроме того, Packshoter "не заточен" (пока) для сборки аксессуаризаций. <br/>
 			Собирать аксессуаризации можно, но проверки будут неполноценными и  возможны ошибки.
 		</p>
-
-
-
 
         <div class="rectmin txt_cntr_mddls">Начало работы</div>
         <img src="img/start_warning.png"class="imgright">
@@ -346,7 +388,7 @@
    
     </div>
 
-    <footer class="footer txt_cntr_mddls"id="footer">28.06.2024 kofein3d@gmail.com</footer>
+    <footer class="footer txt_cntr_mddls"id="footer">18.09.2024 kofein3d@gmail.com</footer>
 
     </body>
     </html>
