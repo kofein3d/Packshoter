@@ -5,7 +5,7 @@
 			<meta name="Packshoter manual"content="width=device-width,initial-scale=1">
 			<title>Packshoter manual</title>
 			<style>
-			 @font-face {
+			  @font-face{
 							font-family:ISOCPEUR; 
 							src:url(img/isocpeur.ttf);
 						}
@@ -126,15 +126,42 @@
 							padding:3px;
 							box-sizing:border-box;
 						}
+		.video-container{
+							max-width: 97%;
+							text-align: center;
+							margin: 0 auto;
+  						}
+
+				   video{
+							max-width: 97%;
+							height: auto;
+						}
 			</style>
 		</head>
 	<body>
 
 		<div class="content">
-
 		<h1><img src="img/logo.png"width="1100"></h1>
 		<div class="rect txt_cntr_mddl">PACKSHOTER</div>
 		<h2 class="imgCenter"><img src="img/interface_a.png"width="450"></h2>
+		<br/><br/><br/>
+
+		<div class="rectmin txt_cntr_mddls">Версия 4.29 (changelog)</div>
+
+		<p> <span>ДОБАВЛЕНО:</span><br/>
+			1 - Возможность собирать аксессуаризации с нуля<br/>
+			2 - Возможность добавлять аксессуары из сцен визуализаторов<br/>
+			3 - Переименование добавляемых аксессуаров со старой номенклатуры на новую<br/>
+			4 - Автоматическое создание текстуры _H если отсутствует (аксессуаризация)<br/>
+			5 - Проверка структуры SKU с «_» &nbsp;( _ACC_&nbsp;&nbsp;&nbsp;_VAR_&nbsp;&nbsp;&nbsp;_BUN_&nbsp;&nbsp;&nbsp;_FIX_&nbsp;&nbsp;&nbsp;_PIV_ )<br/>
+			6 - Улучшен ввод названия в "Nom renam" (можно вводить название целиком)<br/><br/><br/>
+			<span>КРАТКАЯ ВИДЕОИНСТРУКЦИЯ ПО СБОРКЕ АКСЕССУУАРИЗАЦИИ:</span><br/>
+	</p>
+			<div class="video-container">
+				<video controls>
+				<source src="img/acc.mp4" type="video/mp4" />
+				</video></div><br/><br/><br/>
+
 		<div class="rectmin txt_cntr_mddls">Версия 4.20 (changelog)</div>
 
 		<p style="position: relative; left: 265px;"><span>ИЗМЕНЕНИЯ В СТРУКТУРЕ НАЗВАНИЙ!</span></p>
@@ -236,165 +263,165 @@
 			Собирать аксессуаризации можно, но проверки будут неполноценными и  возможны ошибки.
 		</p>
 
-        <div class="rectmin txt_cntr_mddls">Начало работы</div>
-        <img src="img/start_warning.png"class="imgright">
+		<div class="rectmin txt_cntr_mddls">Начало работы</div>
+		<img src="img/start_warning.png"class="imgright">
 
-        <p class="txt_left">Если при запуске появляется окно <span>WRONG SCENE NAME</span><br/>
-            необходимо проверить сцену и структуру папок.<br/>
-            Сцена должна полностью соответствовать базовому ТЗ!<br/>
-            При запуске скрипт проверяет правильность названия<br/>
-            базовой папки, сцены и соответствие названия объектов<br/>
-            названию сцены.</p>
+		<p class="txt_left">Если при запуске появляется окно <span>WRONG SCENE NAME</span><br/>
+			необходимо проверить сцену и структуру папок.<br/>
+			Сцена должна полностью соответствовать базовому ТЗ!<br/>
+			При запуске скрипт проверяет правильность названия<br/>
+			базовой папки, сцены и соответствие названия объектов<br/>
+			названию сцены.</p>
 
-        <div class="rectminy"></div>
+		<div class="rectminy"></div>
 
-        <img src="img/start.png"class="imgright">
+		<img src="img/start.png"class="imgright">
 
-        <p class="txt_left"><span>CREATE SCENE</span> - создание новой сцены.<br/>
-            <span>FIX SCENE</span> - открывает ранее созданную сцену <br/>
-            для внесения в нее правок.<br/>Если открываемая сцена не соответствует ТЗ<br/>
-            кнопка FIX SCENE будет неактивной<br/>
-            <span>ACCESSORYZATION</span> - добавление в сцену<br/>
-            на готовый объект готовых аксессессуаров из ZIP архивов упакованных по ТЗ.<br/>
-            Не подходит для ручной аксессуаризации, при которой модели аксессуаров<br/>
-            не упакованы по ТЗ, а перетаскиваются вручную из готовых сцен.</p>
+		<p class="txt_left"><span>CREATE SCENE</span> - создание новой сцены.<br/>
+			<span>FIX SCENE</span> - открывает ранее созданную сцену <br/>
+			для внесения в нее правок.<br/>Если открываемая сцена не соответствует ТЗ<br/>
+			кнопка FIX SCENE будет неактивной<br/>
+			<span>ACCESSORYZATION</span> - добавление в сцену<br/>
+			на готовый объект готовых аксессессуаров из ZIP архивов упакованных по ТЗ.<br/>
+			Не подходит для ручной аксессуаризации, при которой модели аксессуаров<br/>
+			не упакованы по ТЗ, а перетаскиваются вручную из готовых сцен.</p>
 
-        <div class="rectminy"></div>
+		<div class="rectminy"></div>
 
-        <img src="img/check.png"class="imgright">
+		<img src="img/check.png"class="imgright">
 
-        <p class="txt_left">&nbsp При запуске скрипт проверяет правильность названия сцены<br/>
-              &nbsp и соответствие названия объектов названию сцены.<br/>
-            - Если названия соответствуют ТЗ - верхний <span>CHECK</span> будет зеленым<br/>
-            - Если названия строчными (маленькими) буквами (для случаев,<br/>
-              &nbsp когда на объекте используются Vray материалы) верхний check<br/>
-              &nbsp будет оранжевым<br/>
-            - Если скрипт выдает ошибки при запуске - проверяем сцену и названия.</p>
+		<p class="txt_left">&nbsp При запуске скрипт проверяет правильность названия сцены<br/>
+				&nbsp и соответствие названия объектов названию сцены.<br/>
+			- Если названия соответствуют ТЗ - верхний <span>CHECK</span> будет зеленым<br/>
+			- Если названия строчными (маленькими) буквами (для случаев,<br/>
+				&nbsp когда на объекте используются Vray материалы) верхний check<br/>
+				&nbsp будет оранжевым<br/>
+			- Если скрипт выдает ошибки при запуске - проверяем сцену и названия.</p>
 
-        <div class="rectmin txt_cntr_mddls">Camera set</div>
-        <img src="img/camset.png"width="200"class="imgright">
+		<div class="rectmin txt_cntr_mddls">Camera set</div>
+		<img src="img/camset.png"width="200"class="imgright">
 
-        <p class="txt_left">Выбранный сет камер (Camera Set) должен соответствовать<br/>
-            типу объекта в сцене. Если ни один из сетов не соответствует<br/>
-            типу объекта выбираем тот, который позволит показать объект<br/>
-            с самого выгодного ракурса</p>
+		<p class="txt_left">Выбранный сет камер (Camera Set) должен соответствовать<br/>
+			типу объекта в сцене. Если ни один из сетов не соответствует<br/>
+			типу объекта выбираем тот, который позволит показать объект<br/>
+			с самого выгодного ракурса</p>
 
-        <div class="rectbig"></div>
+		<div class="rectbig"></div>
 
-        <div class="rectmin txt_cntr_mddls">Light Set</div>
-        <img src="img\lightset.png"class="imgright">
+		<div class="rectmin txt_cntr_mddls">Light Set</div>
+		<img src="img\lightset.png"class="imgright">
 
-        <p class="txt_left"> 
-            Сцена должна быть освещена одним из наборов источников света.<br/>
-            <span>По-умолчанию </span>использутся<span> “Dome Light” </span>для напольных изделий,<br/>
-            <span>“Wall Light” </span>для настенных изделий и<span> “Ceiling Light” </span>для потолочных<br/>
-             (светильники, люстры и т.п.)<br/>
-            Все остальные наборы используются после согласования<br/>с менеджером проекта.<br/><br/>
+		<p class="txt_left"> 
+			Сцена должна быть освещена одним из наборов источников света.<br/>
+			<span>По-умолчанию </span>использутся<span> “Dome Light” </span>для напольных изделий,<br/>
+			<span>“Wall Light” </span>для настенных изделий и<span> “Ceiling Light” </span>для потолочных<br/>
+				(светильники, люстры и т.п.)<br/>
+			Все остальные наборы используются после согласования<br/>с менеджером проекта.<br/><br/>
 
-            <span>HDRI</span> сет состоит из 6 пунктов, по-умолчанию используется <span>HDRI_1</span>.<br/>
+			<span>HDRI</span> сет состоит из 6 пунктов, по-умолчанию используется <span>HDRI_1</span>.<br/>
 
-            Ползунок врещения HDRI выставлен по-умолчанию.<br/>
-            (подменю раскрывается после нажатия кнопки "HDRI")</p>
+			Ползунок врещения HDRI выставлен по-умолчанию.<br/>
+			(подменю раскрывается после нажатия кнопки "HDRI")</p>
 
-        <img src="img/hdrisel.png"style="position:relative;left:50px;"><br/>
+		<img src="img/hdrisel.png"style="position:relative;left:50px;"><br/>
 
-        <div class="rectmin txt_cntr_mddls">Lights rotate</div>
-        <p class="txt_left">Вращение всего выбранного сета освещения вокруг изделия позволяет более точно 
-            настроить<br/>угол падения света от всей группы источников. (Аналогично в подменю HDRI)</p>
+		<div class="rectmin txt_cntr_mddls">Lights rotate</div>
+		<p class="txt_left">Вращение всего выбранного сета освещения вокруг изделия позволяет более точно 
+			настроить<br/>угол падения света от всей группы источников. (Аналогично в подменю HDRI)</p>
 
-        <img src="img/lightrot.png"style="position:relative;left:50px;">
+		<img src="img/lightrot.png"style="position:relative;left:50px;">
 
 
-        <div class="rectmin txt_cntr_mddls">Flip Light</div>
-        <img src="img\flip.png"class="imgright">
-        <p class="txt_left">Отзеркаливание выбранного сета освещения слева направо и наоборот</p><br/>
+		<div class="rectmin txt_cntr_mddls">Flip Light</div>
+		<img src="img\flip.png"class="imgright">
+		<p class="txt_left">Отзеркаливание выбранного сета освещения слева направо и наоборот</p><br/>
 
-        <div class="rectmin txt_cntr_mddls">Light</div>
-        <img src="img\light.png"class="imgright">
-        <p class="txt_left">
+		<div class="rectmin txt_cntr_mddls">Light</div>
+		<img src="img\light.png"class="imgright">
+		<p class="txt_left">
 			На всех превью со всех камер не должно быть пересветов.<br/>
 			<span id="red">Интенсивность источников света (ИС) сета </span><span>“Dome Light”</span> <span id="red">изменять нельзя!</span><br/>
 			При использовании сета <span>“Dome Light”</span>, для достижения приемлемого результата<br/> 
 			можно (придется) изменять яркость текстур.<br/><br/>
 			Во всех остальных случаях для достижения приемлемого результата <br/>
 			можно изменять multiplier ИС.<br/>
-            После установки финального значения multiplier необходимо сохранять сцену через Packshoter.<br/>
+			После установки финального значения multiplier необходимо сохранять сцену через Packshoter.<br/>
 			<span id="red">Размер и координаты ИС изменять нельзя.</span><br/><br/></p>
 
-        <div class="rectmin txt_cntr_mddls">Camcor & Camsel</div>
-        <img src="img\camcor.png"class="imgright">
+		<div class="rectmin txt_cntr_mddls">Camcor & Camsel</div>
+		<img src="img\camcor.png"class="imgright">
 
-        <p class="txt_left"><span>Camcor</span> - применяет ко всем камерам модификатор "Camera correction"</p>
-        <p class="txt_left"><span>Camsel</span> - Выделяет все камеры в сцене для дальнейших манипуляций</p><br/>
+		<p class="txt_left"><span>Camcor</span> - применяет ко всем камерам модификатор "Camera correction"</p>
+		<p class="txt_left"><span>Camsel</span> - Выделяет все камеры в сцене для дальнейших манипуляций</p><br/>
 
-        <img src="img\cams.png"class="imgright">
+		<img src="img\cams.png"class="imgright">
 
-        <p class="txt_left"><span>Cams</span> - Последовательное переключение всех камер в сцене</p><br/><br/>
+		<p class="txt_left"><span>Cams</span> - Последовательное переключение всех камер в сцене</p><br/><br/>
 
-        <div class="rectmin txt_cntr_mddls">Camera move</div>
-        <p class="txt_left">Объект должен быть отцентрован во вьюпорте при помощи кнопок <span>F L R B</span>.<br/>
-            По-умолчанию нельзя менять FOV и углы вращения камер, <br/>если в этом есть необходимость - 
-            согласовываем с менеджером проекта.<br/>
-            Кнопки <span>F L R B</span> работают только если выделена камера (камеры).</p> 
-          
-        <img src="img\camera_move.png"width="1100"style="position:relative;">
-        
-        <div class="rectmin txt_cntr_mddls">Grid</div>
-        <img src="img\grid.png"class="imgright">
+		<div class="rectmin txt_cntr_mddls">Camera move</div>
+		<p class="txt_left">Объект должен быть отцентрован во вьюпорте при помощи кнопок <span>F L R B</span>.<br/>
+			По-умолчанию нельзя менять FOV и углы вращения камер, <br/>если в этом есть необходимость - 
+			согласовываем с менеджером проекта.<br/>
+			Кнопки <span>F L R B</span> работают только если выделена камера (камеры).</p>
+			
+		<img src="img\camera_move.png"width="1100"style="position:relative;">
+		
+		<div class="rectmin txt_cntr_mddls">Grid</div>
+		<img src="img\grid.png"class="imgright">
 
-        <p class="txt_left"> Объект должен быть отцентрован во вьюпорте при помощи сетки.<br/>
-            Объект должен быть по центру, одного масштаба на всех видах <br/>и не выходить за пределы 
-            границ сетки, за исключением крупно- <br/>габаритных объектов (Диван, Шкаф, Ковер и.т.п)</p> 
-        <img src="img\grid_scr.png"width="500"style="position:relative;left:50px;">
-   
-        <div class="rectmin txt_cntr_mddls">Environment</div>
-        <img src="img\env.png"width="300"class="imgright">
-        <p class="txt_left">Для настройки бликов и отражений используем ползунок <span>"Rotate"</span> <br/>
-            Ползунок Rotate позволяет вращать HDRI в сцене.<br/>            Значение <span>"Mult"</span> меняет яркость HDRI<br/>
-            Кнопка <span>"Show"</span> для наглядности отображает HDRI во вьюпорте.<br/>
-            <span>Color selector</span> - позволяет менять цвет бэкграунда на рендерах.<br/>
-            Цвет меняется только по требованию проект-менеджера,<br/>по-умолчанию должен быть белый.<br/></p>
-        
-        <div class="rectmin txt_cntr_mddls">Rendering</div>
-        <img src="img\rend_base.png"class="imgright">
+		<p class="txt_left"> Объект должен быть отцентрован во вьюпорте при помощи сетки.<br/>
+			Объект должен быть по центру, одного масштаба на всех видах <br/>и не выходить за пределы 
+			границ сетки, за исключением крупно- <br/>габаритных объектов (Диван, Шкаф, Ковер и.т.п)</p> 
+		<img src="img\grid_scr.png"width="500"style="position:relative;left:50px;">
 
-        <p class="txt_left"> <span>Render</span> - Рендер превью. Создает и сохраняет изображение<br/>
-            в папку "preview" (создает папку "preview", если она отсутствует)<br/>
-            Кнопка Render становится активной только после сохранения сцены<br/>(кнопка SAVE)<br/>
-            <span>A</span> - Рендеринг преью с альфа-каналом</p> 
+		<div class="rectmin txt_cntr_mddls">Environment</div>
+		<img src="img\env.png"width="300"class="imgright">
+		<p class="txt_left">Для настройки бликов и отражений используем ползунок <span>"Rotate"</span> <br/>
+			Ползунок Rotate позволяет вращать HDRI в сцене.<br/>            Значение <span>"Mult"</span> меняет яркость HDRI<br/>
+			Кнопка <span>"Show"</span> для наглядности отображает HDRI во вьюпорте.<br/>
+			<span>Color selector</span> - позволяет менять цвет бэкграунда на рендерах.<br/>
+			Цвет меняется только по требованию проект-менеджера,<br/>по-умолчанию должен быть белый.<br/></p>
+		
+		<div class="rectmin txt_cntr_mddls">Rendering</div>
+		<img src="img\rend_base.png"class="imgright">
 
-        <img src="img\rend_ipr.png"class="imgright">
+		<p class="txt_left"> <span>Render</span> - Рендер превью. Создает и сохраняет изображение<br/>
+			в папку "preview" (создает папку "preview", если она отсутствует)<br/>
+			Кнопка Render становится активной только после сохранения сцены<br/>(кнопка SAVE)<br/>
+			<span>A</span> - Рендеринг преью с альфа-каналом</p> 
 
-        <p class="txt_left"><span>IPR</span> - промежуточный рендеринг для настройки освещения<br/>
-            и для настройки материалов  (В этом режиме не работает Camera Correction)</p>
+		<img src="img\rend_ipr.png"class="imgright">
 
-        <div class="rectmin txt_cntr_mddls">Product type</div>
-        <img src="img\product_type_empty.png"class="imgright">
-        
-        <p class="txt_left"> Необходимо переименовывать все камеры в сцене <br/>
-            в соответствии с типом изделия<br/>
-            Для этого в красное поле <span>PRODUCT TYPE</span> копируем тип изделия  <br/>
-            из названия архива и нажимаем кнопку <span>“Rename Cameras”</span></p>
-        <img src="img\product_type_fill.png"class="imgright">
-        <p class="txt_left"> Например:  <br/>
-        <span>162985469-WALMART-<span id="blue">COFFEE_TABLE</span>_BIG_JOE-BLACK</span><br/>
-        <span>UMA9891-HAYNEEDLE-<span id="blue">WALL_MIRROR</span>_DECMODE-BRONZE</span><br/>
-        <span>854001-GENERIC-<span id="blue">BOOKCASE</span>_BIBGEN_NADINE-BLACK_NATURAL</span><br/>
-        Недопустимо использование "<span id="red">-</span>", например <span id="red">COFFEE-TABLE</span></span></p> 
+		<p class="txt_left"><span>IPR</span> - промежуточный рендеринг для настройки освещения<br/>
+			и для настройки материалов  (В этом режиме не работает Camera Correction)</p>
 
-        <div class="rectmin txt_cntr_mddls">Export FBX</div>
-        <img src="img\export_fbx.png"class="imgright">
+		<div class="rectmin txt_cntr_mddls">Product type</div>
+		<img src="img\product_type_empty.png"class="imgright">
+		
+		<p class="txt_left"> Необходимо переименовывать все камеры в сцене <br/>
+			в соответствии с типом изделия<br/>
+			Для этого в красное поле <span>PRODUCT TYPE</span> копируем тип изделия  <br/>
+			из названия архива и нажимаем кнопку <span>“Rename Cameras”</span></p>
+		<img src="img\product_type_fill.png"class="imgright">
+		<p class="txt_left"> Например:  <br/>
+		<span>162985469-WALMART-<span id="blue">COFFEE_TABLE</span>_BIG_JOE-BLACK</span><br/>
+		<span>UMA9891-HAYNEEDLE-<span id="blue">WALL_MIRROR</span>_DECMODE-BRONZE</span><br/>
+		<span>854001-GENERIC-<span id="blue">BOOKCASE</span>_BIBGEN_NADINE-BLACK_NATURAL</span><br/>
+		Недопустимо использование "<span id="red">-</span>", например <span id="red">COFFEE-TABLE</span></span></p>
 
-        <p class="txt_left">Промежуточный экспорт FBX для запекания AO<br/>Не является финальным экспортом<br/>
-        Финальный экспорт осуществляется автоматически<br/>После проверки сцены перед архивацией.</p>
+		<div class="rectmin txt_cntr_mddls">Export FBX</div>
+		<img src="img\export_fbx.png"class="imgright">
 
-        <br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/>
+		<p class="txt_left">Промежуточный экспорт FBX для запекания AO<br/>Не является финальным экспортом<br/>
+		Финальный экспорт осуществляется автоматически<br/>После проверки сцены перед архивацией.</p>
 
-        <p style="position: relative; left: 340px;"><span>(Продолжение следует...)</span></p><br/>
-   
-    </div>
+		<br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/>
 
-    <footer class="footer txt_cntr_mddls"id="footer">07.10.2024 kofein3d@gmail.com</footer>
+		<p style="position: relative; left: 340px;"><span>(Продолжение следует...)</span></p><br/>
 
-    </body>
-    </html>
+	</div>
+
+	<footer class="footer txt_cntr_mddls"id="footer">20.01.2025 kofein3d@gmail.com</footer>
+
+	</body>
+	</html>
