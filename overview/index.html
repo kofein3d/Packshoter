@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="ru">
+<html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -265,9 +265,9 @@ footer .mono{font-size:12px}
   <div class="top-in">
     <div class="brand"><b>Packshoter</b><span id="brandsub"></span></div>
     <div class="langs" id="langs" role="group">
-      <button type="button" id="lang-ru" data-l="ru">RU</button>
       <button type="button" id="lang-en" data-l="en">EN</button>
       <button type="button" id="lang-fr" data-l="fr">FR</button>
+      <button type="button" id="lang-ru" data-l="ru">RU</button>
     </div>
   </div>
 </header>
@@ -1255,8 +1255,9 @@ let STATUS_LABEL = {}, SHOT_LABEL = "";
 
 function render(lang){
   const C = CONTENT[lang];
-  STATUS_LABEL = C.statusLabels || { ok:"готово", wip:"в работе", no:"нет" };
-  SHOT_LABEL   = C.shotLabel || "скриншот будет добавлен";
+  // Запасные подписи — на английском: он же язык по умолчанию.
+  STATUS_LABEL = C.statusLabels || { ok:"done", wip:"under way", no:"not yet" };
+  SHOT_LABEL   = C.shotLabel || "screenshot to follow";
 
   document.documentElement.lang = lang;
   document.getElementById("brandsub").textContent = C.sub;
@@ -1328,12 +1329,15 @@ document.getElementById("langs").addEventListener("click", e=>{
   if(b && CONTENT[b.dataset.l]) render(b.dataset.l);
 });
 
-let start = "ru";
+/* По умолчанию английский: страница уходит наружу, и англоязычная версия —
+   общий знаменатель. Французскую и русскую подставляем только тем, у кого
+   такой язык в браузере, либо тем, кто выбрал её кнопкой раньше. */
+let start = "en";
 try{
   const saved = localStorage.getItem("pshtr-lang");
   if(saved && CONTENT[saved]) start = saved;
   else if((navigator.language||"").startsWith("fr") && CONTENT.fr) start = "fr";
-  else if((navigator.language||"").startsWith("en") && CONTENT.en) start = "en";
+  else if((navigator.language||"").startsWith("ru") && CONTENT.ru) start = "ru";
 }catch(e){}
 render(start);
 </script>
