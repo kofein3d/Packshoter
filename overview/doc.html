@@ -1,0 +1,1313 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Packshoter</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+Condensed:wght@600;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<style>
+/* ── Палитра взята у самого инструмента: #232323 — фон окон Packshoter,
+     #ffaa00 — его акцент, #6496c8 — второй акцент интерфейса загрузчика. ── */
+:root{
+  --ground:#f7f5f2; --surface:#ffffff; --surface-2:#f1ede7; --sunken:#ebe6de;
+  --ink:#1b1a18; --ink-soft:#413d38; --muted:#6b655c; --line:#ded8cf; --line-soft:#eae4db;
+  --accent:#b76e00; --accent-ink:#8a5400; --accent-soft:#fdf1dd;
+  --blue:#3c6f9f; --blue-soft:#e8eff7;
+  --good:#3d7a4d; --warn:#9a6a14; --bad:#a34036;
+  --shadow:0 1px 2px rgba(27,26,24,.05), 0 8px 24px -16px rgba(27,26,24,.25);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --ground:#191817; --surface:#232323; --surface-2:#2b2a28; --sunken:#1f1e1c;
+    --ink:#eae6e0; --ink-soft:#c9c4bc; --muted:#948d84; --line:#3a3835; --line-soft:#302f2c;
+    --accent:#ffaa00; --accent-ink:#ffc04d; --accent-soft:#33260c;
+    --blue:#6496c8; --blue-soft:#1d2a36;
+    --good:#74b183; --warn:#d9a441; --bad:#e07c6c;
+    --shadow:0 1px 2px rgba(0,0,0,.4), 0 10px 30px -20px rgba(0,0,0,.8);
+  }
+}
+:root[data-theme="dark"]{
+  --ground:#191817; --surface:#232323; --surface-2:#2b2a28; --sunken:#1f1e1c;
+  --ink:#eae6e0; --ink-soft:#c9c4bc; --muted:#948d84; --line:#3a3835; --line-soft:#302f2c;
+  --accent:#ffaa00; --accent-ink:#ffc04d; --accent-soft:#33260c;
+  --blue:#6496c8; --blue-soft:#1d2a36;
+  --good:#74b183; --warn:#d9a441; --bad:#e07c6c;
+  --shadow:0 1px 2px rgba(0,0,0,.4), 0 10px 30px -20px rgba(0,0,0,.8);
+}
+
+*{box-sizing:border-box}
+html{ -webkit-text-size-adjust:100% }
+body{
+  margin:0; background:var(--ground); color:var(--ink);
+  font-family:"IBM Plex Sans","Segoe UI",system-ui,sans-serif;
+  font-size:16px; line-height:1.62; letter-spacing:-.003em;
+}
+h1,h2,h3,h4{font-family:"IBM Plex Sans Condensed","IBM Plex Sans","Segoe UI",sans-serif;font-weight:600;text-wrap:balance;margin:0}
+code,.mono{font-family:"IBM Plex Mono",ui-monospace,Consolas,monospace}
+
+/* ── Шапка ─────────────────────────────────────────────────────────── */
+.top{
+  position:sticky; top:env(safe-area-inset-top,0px); z-index:20;
+  background:color-mix(in srgb, var(--ground) 88%, transparent);
+  backdrop-filter:blur(10px); border-bottom:1px solid var(--line);
+}
+.top-in{max-width:1080px; margin:0 auto; padding:10px 20px; display:flex; gap:16px; align-items:center; justify-content:space-between}
+.brand{display:flex; align-items:baseline; gap:10px; min-width:0}
+.brand b{font-family:"IBM Plex Sans Condensed",sans-serif; font-size:19px; letter-spacing:.01em}
+.brand span{font-size:12px; color:var(--muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+.langs{display:flex; gap:2px; background:var(--surface-2); border:1px solid var(--line); border-radius:7px; padding:2px}
+.langs button{
+  font:500 12px/1 "IBM Plex Mono",monospace; letter-spacing:.06em; text-transform:uppercase;
+  background:transparent; color:var(--muted); border:0; border-radius:5px; padding:7px 11px; cursor:pointer;
+}
+.langs button[aria-pressed="true"]{background:var(--surface); color:var(--ink); box-shadow:var(--shadow)}
+.langs button:focus-visible, a:focus-visible, .tocs a:focus-visible{outline:2px solid var(--accent); outline-offset:2px}
+
+/* ── Общая раскладка ───────────────────────────────────────────────── */
+.wrap{max-width:1080px; margin:0 auto; padding-inline:20px; padding-block:0 96px}
+.hero{padding-block:56px 40px; border-bottom:1px solid var(--line); display:grid; gap:22px}
+.eyebrow{font:500 11px/1 "IBM Plex Mono",monospace; letter-spacing:.14em; text-transform:uppercase; color:var(--accent-ink)}
+.hero h1{font-size:clamp(18px,6.4vw,26px); line-height:1.02; letter-spacing:-.02em}
+.hero .lede{font-size:clamp(17px,2.1vw,20px); color:var(--ink-soft); max-width:60ch}
+
+.stats{display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:1px; background:var(--line); border:1px solid var(--line); border-radius:10px; overflow:hidden; margin-top:6px}
+.stat{background:var(--surface); padding:16px 18px; display:grid; gap:3px}
+.stat b{font-family:"IBM Plex Mono",monospace; font-weight:600; font-size:27px; font-variant-numeric:tabular-nums; color:var(--accent-ink); line-height:1.1}
+.stat span{font-size:13px; color:var(--muted)}
+
+.tocs{display:flex; flex-wrap:wrap; gap:8px; padding-block:26px; border-bottom:1px solid var(--line)}
+.tocs a{
+  font:500 12px/1 "IBM Plex Mono",monospace; color:var(--muted); text-decoration:none;
+  border:1px solid var(--line); border-radius:6px; padding:8px 11px; background:var(--surface);
+}
+.tocs a:hover{color:var(--ink); border-color:var(--accent)}
+.tocs a b{color:var(--accent-ink); font-weight:600; margin-inline-end:6px}
+
+section{padding-block:56px; border-bottom:1px solid var(--line-soft); scroll-margin-top:72px}
+.sec-head{display:grid; gap:10px; margin-bottom:26px}
+.sec-num{font:600 12px/1 "IBM Plex Mono",monospace; color:var(--accent-ink); letter-spacing:.1em}
+.sec-head h2{font-size:clamp(26px,3.6vw,36px); line-height:1.12; letter-spacing:-.015em}
+.sec-head .sub{color:var(--muted); font-size:15px; max-width:62ch}
+
+.body{display:grid; gap:20px; max-width:72ch}
+.body p{margin:0}
+.body p.wide, .wide{max-width:none}
+strong{font-weight:600}
+.mark{color:var(--accent-ink); font-weight:600}
+
+ul.list{margin:0; padding:0; list-style:none; display:grid; gap:11px}
+ul.list li{padding-inline-start:20px; position:relative}
+ul.list li::before{content:""; position:absolute; inset-block-start:.62em; inset-inline-start:2px; width:7px; height:1px; background:var(--accent)}
+ul.list li b{font-weight:600}
+
+/* ── Карточки, таблицы, шаги ───────────────────────────────────────── */
+.cards{display:grid; grid-template-columns:repeat(auto-fit,minmax(248px,1fr)); gap:14px}
+.card{background:var(--surface); border:1px solid var(--line); border-radius:10px; padding:18px 20px; display:grid; gap:8px; align-content:start}
+.card h3{font-size:18px}
+.card p{margin:0; font-size:14.5px; color:var(--ink-soft)}
+.card .tag{font:500 11px/1 "IBM Plex Mono",monospace; letter-spacing:.08em; text-transform:uppercase; color:var(--muted)}
+
+.tablewrap{overflow-x:auto; border:1px solid var(--line); border-radius:10px; background:var(--surface)}
+table{border-collapse:collapse; width:100%; font-size:14.5px; min-width:440px}
+th,td{text-align:start; padding:11px 16px; border-bottom:1px solid var(--line-soft); vertical-align:top}
+th{font:600 11px/1.4 "IBM Plex Mono",monospace; letter-spacing:.08em; text-transform:uppercase; color:var(--muted); background:var(--surface-2)}
+tr:last-child td{border-bottom:0}
+td.num{font-family:"IBM Plex Mono",monospace; font-variant-numeric:tabular-nums; color:var(--accent-ink); font-weight:600; white-space:nowrap}
+td code, .body code{font-size:.9em; background:var(--surface-2); border:1px solid var(--line-soft); border-radius:4px; padding:1px 5px}
+
+.steps{display:grid; gap:12px; counter-reset:s}
+.step{display:grid; grid-template-columns:34px 1fr; gap:14px; align-items:start; background:var(--surface); border:1px solid var(--line); border-radius:10px; padding:15px 18px}
+.step .n{font:600 13px/34px "IBM Plex Mono",monospace; width:34px; height:34px; text-align:center; border-radius:8px; background:var(--accent-soft); color:var(--accent-ink)}
+.step h4{font-size:16px; margin-bottom:2px}
+.step p{margin:0; font-size:14.5px; color:var(--ink-soft)}
+
+/* ── Схема процесса: цепочка звеньев со стрелками ──────────────────── */
+/* Сетка 3×2 «змейкой»: верхний ряд идёт слева направо, нижний — справа налево,
+   поэтому поток не разрывается между рядами. Если оба ряда читать в одну
+   сторону, они выглядят как две независимые цепочки — так и было.
+   Звеньев ровно шесть, строки заполняются целиком, высоту выравнивает grid. */
+.flow{display:grid; grid-template-columns:repeat(3,1fr); gap:34px 30px}
+.flow .fl{
+  position:relative; display:grid; gap:2px; align-content:start; background:var(--surface);
+  border:1px solid var(--line); border-radius:9px; padding:12px 14px; min-width:0;
+}
+.flow .fl b{font-family:"IBM Plex Sans Condensed",sans-serif; font-weight:600; font-size:14.5px}
+.flow .fl span{font-size:12.5px; color:var(--muted)}
+
+/* Позиции задаём полностью — и колонку, и строку. Если указать только колонку,
+   grid уводит каждое звено в собственную строку, и сетка рассыпается. */
+.flow .fl:nth-child(1){grid-area:1/1}
+.flow .fl:nth-child(2){grid-area:1/2}
+.flow .fl:nth-child(3){grid-area:1/3}
+.flow .fl:nth-child(4){grid-area:2/3}
+.flow .fl:nth-child(5){grid-area:2/2}
+.flow .fl:nth-child(6){grid-area:2/1}
+
+/* Указатели — треугольники, а не стрелки-символы: те в разных шрифтах рисуются
+   волосяной линией и в жирном начертании не становятся заметнее. */
+.flow .fl::after{position:absolute; color:var(--accent); font-size:13px; line-height:1}
+.flow .fl:nth-child(1)::after, .flow .fl:nth-child(2)::after{
+  content:"▶"; inset-inline-end:-21px; top:50%; transform:translateY(-50%);
+}
+.flow .fl:nth-child(3)::after{
+  content:"▼"; inset-inline-start:50%; bottom:-24px; transform:translateX(-50%);
+}
+.flow .fl:nth-child(4)::after, .flow .fl:nth-child(5)::after{
+  content:"◀"; inset-inline-start:-21px; top:50%; transform:translateY(-50%);
+}
+
+/* Возврат на доработку — путь назад, поэтому и цвет другой, и стрелка обратная. */
+.flowback{
+  display:flex; align-items:center; gap:10px; margin-top:8px; padding:9px 13px;
+  border:1px dashed color-mix(in srgb, var(--bad) 45%, var(--line));
+  border-radius:9px; color:var(--bad); font-size:13.5px;
+}
+.flowback .hook{font-size:16px; line-height:1}
+
+/* Узкий экран: змейка теряет смысл — выстраиваем в столбец, указатели вниз. */
+@media (max-width:820px){
+  .flow{grid-template-columns:1fr; gap:26px 0}
+  .flow .fl:nth-child(1){grid-area:1/1}
+  .flow .fl:nth-child(2){grid-area:2/1}
+  .flow .fl:nth-child(3){grid-area:3/1}
+  .flow .fl:nth-child(4){grid-area:4/1}
+  .flow .fl:nth-child(5){grid-area:5/1}
+  .flow .fl:nth-child(6){grid-area:6/1}
+  .flow .fl::after{
+    content:"▼" !important; inset-inline-end:auto; inset-inline-start:50%;
+    top:auto; bottom:-20px; transform:translateX(-50%);
+  }
+  .flow .fl:last-child::after{content:none !important}
+}
+
+/* ── Диаграмма архитектуры ─────────────────────────────────────────── */
+.arch{display:grid; gap:10px}
+.lane{display:grid; grid-template-columns:118px 1fr; gap:12px; align-items:stretch}
+.lane .who{font:500 11px/1.4 "IBM Plex Mono",monospace; letter-spacing:.06em; text-transform:uppercase; color:var(--muted); padding-top:14px}
+.lane .boxes{display:flex; flex-wrap:wrap; gap:10px}
+.box{background:var(--surface); border:1px solid var(--line); border-radius:9px; padding:12px 15px; display:grid; gap:3px; flex:1 1 180px; min-width:0}
+.box b{font-size:15px; font-family:"IBM Plex Sans Condensed",sans-serif; font-weight:600}
+.box span{font-size:13px; color:var(--muted)}
+.box.key{border-color:var(--accent); background:var(--accent-soft)}
+.box.key span{color:var(--accent-ink)}
+.box.cold{border-style:dashed; background:transparent}
+.flowline{display:flex; align-items:center; gap:10px; padding-inline-start:130px; color:var(--muted); font:500 12px/1 "IBM Plex Mono",monospace}
+.flowline::before{content:"↓"; color:var(--accent)}
+
+/* ── Вопрос-ответ ──────────────────────────────────────────────────── */
+.qa{display:grid; gap:2px; background:var(--line); border:1px solid var(--line); border-radius:10px; overflow:hidden}
+.qa > div{background:var(--surface); padding:16px 20px; display:grid; gap:5px}
+.qa h4{font-size:15.5px; color:var(--ink)}
+.qa p{margin:0; font-size:14.5px; color:var(--ink-soft)}
+
+/* ── Статусы ───────────────────────────────────────────────────────── */
+.pill{display:inline-flex; align-items:center; gap:6px; font:500 11px/1 "IBM Plex Mono",monospace; letter-spacing:.06em; text-transform:uppercase; border-radius:99px; padding:5px 10px; border:1px solid}
+.pill::before{content:""; width:6px; height:6px; border-radius:99px; background:currentColor}
+.pill.ok{color:var(--good); border-color:color-mix(in srgb,var(--good) 40%, transparent); background:color-mix(in srgb,var(--good) 8%, transparent)}
+.pill.wip{color:var(--warn); border-color:color-mix(in srgb,var(--warn) 40%, transparent); background:color-mix(in srgb,var(--warn) 8%, transparent)}
+.pill.no{color:var(--bad); border-color:color-mix(in srgb,var(--bad) 40%, transparent); background:color-mix(in srgb,var(--bad) 8%, transparent)}
+
+.note{border-inline-start:2px solid var(--accent); background:var(--surface-2); border-radius:0 8px 8px 0; padding:14px 18px; font-size:14.5px; color:var(--ink-soft)}
+.note b{color:var(--ink)}
+.note.blue{border-color:var(--blue); background:var(--blue-soft)}
+/* Красноватая врезка — то, чего ещё нет. Фон приглушённый: это предупреждение,
+   а не ошибка, и оно не должно перекрикивать остальной текст. */
+.note.red{border-color:var(--bad); border-inline-start-width:3px; background:color-mix(in srgb, var(--bad) 22%, var(--surface))}
+
+/* ── Скриншоты ─────────────────────────────────────────────────────── */
+figure{margin:0; display:grid; gap:8px}
+figure img{width:100%; max-width:100%; display:block; border:1px solid var(--line); border-radius:10px; background:var(--sunken); cursor:zoom-in}
+figure img:hover{border-color:var(--accent)}
+
+/* Просмотр во весь размер. Скриншоты интерфейса плотные: в колонке текста
+   мелкие подписи не читаются, поэтому по клику картинка открывается целиком. */
+.lightbox{
+  position:fixed; inset:0; z-index:60; display:none;
+  background:rgba(12,11,10,.94); padding:24px; cursor:zoom-out;
+}
+.lightbox[data-open="1"]{display:grid; grid-template-rows:1fr auto; gap:14px; place-items:center}
+.lightbox img{max-width:100%; max-height:100%; object-fit:contain; border-radius:8px; box-shadow:0 20px 60px rgba(0,0,0,.6)}
+.lightbox .cap{color:#cfc9c0; font-size:13.5px; text-align:center; max-width:70ch}
+.lightbox .close{
+  position:absolute; top:14px; inset-inline-end:18px; width:38px; height:38px; border-radius:8px;
+  background:rgba(255,255,255,.08); color:#f0ebe4; border:1px solid rgba(255,255,255,.18);
+  font:400 20px/1 "IBM Plex Sans",sans-serif; cursor:pointer;
+}
+.lightbox .close:hover{background:rgba(255,255,255,.16)}
+figure .slot{
+  border:1px dashed var(--line); border-radius:10px; background:var(--sunken);
+  min-height:150px; display:grid; place-items:center; color:var(--muted);
+  font:500 12px/1 "IBM Plex Mono",monospace; letter-spacing:.06em; text-align:center; padding:20px;
+}
+figcaption{font-size:13px; color:var(--muted)}
+/* Ровно две колонки: скриншоты интерфейса плотные, в три и больше они
+   превращаются в нечитаемые марки. На телефоне — одна. */
+.shots{display:grid; grid-template-columns:repeat(2,1fr); gap:16px}
+@media (max-width:720px){ .shots{grid-template-columns:1fr} }
+
+footer{padding-block:34px; color:var(--muted); font-size:13.5px; display:grid; gap:6px}
+footer .mono{font-size:12px}
+
+@media (max-width:640px){
+  .lane{grid-template-columns:1fr; gap:6px}
+  .lane .who{padding-top:0}
+  .flowline{padding-inline-start:0}
+  section{padding-block:44px}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important; transition:none!important}}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="top-in">
+    <div class="brand"><b>Packshoter</b><span id="brandsub"></span></div>
+    <div class="langs" id="langs" role="group">
+      <button type="button" id="lang-en" data-l="en">EN</button>
+      <button type="button" id="lang-fr" data-l="fr">FR</button>
+      <button type="button" id="lang-ru" data-l="ru">RU</button>
+    </div>
+  </div>
+</header>
+
+<main class="wrap" id="app"></main>
+
+<div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="">
+  <button type="button" class="close" id="lbclose" aria-label="Close">✕</button>
+  <img id="lbimg" alt="">
+  <div class="cap" id="lbcap"></div>
+</div>
+
+<script>
+/* ===========================================================================
+   Содержание страницы. Один и тот же скелет на трёх языках: секции и блоки
+   совпадают по структуре, меняется только текст. Так ни один язык не может
+   тихо отстать от другого — расхождение сразу видно по разной длине массива.
+   =========================================================================== */
+
+const CONTENT = {};
+
+/* ─────────────────────────── РУССКИЙ ─────────────────────────── */
+CONTENT.ru = {
+  sub: "Плагин для 3ds Max: проверка, стандартизация и упаковка 3D-моделей",
+  statusLabels: { ok:"готово", wip:"в работе", no:"нет" },
+  shotLabel: "скриншот будет добавлен",
+  hero: {
+    eyebrow: "Техническое описание",
+    h1: "",
+    lede: "Packshoter это плагин для 3ds Max. Он создает сцену для готовой модели, ставит камеры и свет, выравнивает модель в кадре, запекает AO и рендерит превью. Затем проверяет сцену по сорока пяти этапам, исправляет три сотни типовых ошибок одним нажатием и собирает готовый ZIP-архив, который содержит:<br><span class=\"lede-list\">— сцену 3ds Max с текстурами<br>— превью модели 1000×750<br>— экспорты: GLB, FBX, OBJ</span><br><br>В дополнение к Packshoter идет ModelChecker, который позволяет проверить модель визуально в браузере: сначала модель осматривает моделлер, после загрузки на проверку — верификатор.",
+    stats: [
+      { n: "45", l: "этапов проверки", h: "от имён и папок до UV и материалов" },
+      { n: "~280", l: "видов ошибок", h: "каждое с собственным кодом" },
+      { n: "313", l: "автоисправлений", h: "по кнопке FIX, без ручной правки" },
+      { n: "12", l: "режимов визуальной проверки", h: "в браузерном ModelChecker" }
+    ]
+  },
+  toc: "Содержание",
+  sections: [
+    /* 1 ─────────────────────────────────────────────────────────── */
+    {
+      id: "tools", num: "01", title: "Два инструмента",
+      sub: "Packshoter работает у моделлера внутри 3ds Max, ModelChecker — у моделлера и верификатора в браузере.",
+      blocks: [
+        { t: "cards", v: [
+          { tag: "3ds Max · рабочее место моделлера", h: "Packshoter", p: "Сборка сцены, камеры, свет, запекание AO, рендер превью, проверка сцены, автоисправления, упаковка архива. Здесь модель создаётся и приводится к стандарту." },
+          { tag: "Браузер · рабочее место верификатора", h: "ModelChecker", p: "Визуальная проверка готового GLB в двенадцати режимах: карты материалов по отдельности, форма без текстур, нормали, изнанка, развёртка UV. Ничего не меняет — только показывает." }
+        ]},
+        { t: "shots", v: [
+          { src: "img/packshoter-main.png", cap: "Packshoter в 3ds Max: наборы камер и света, настройка пола, установка пивота, список ошибок с кнопками FIX, сборщик материалов и Detacher" },
+          { src: "img/modelchecker.png", cap: "ModelChecker: дерево сцены с полигонажем по объектам, габариты модели в миллиметрах и двенадцать режимов визуальной проверки" },
+          { src: "img/packshoter-cameras.png", cap: "Результат работы наборов камер: девять ракурсов одной модели. В шапке — габариты, версия 3ds Max, версия шаблона сцены, версия Packshoter и точка пивота" },
+          { src: "img/modelchecker-uv.png", cap: "Проверка развёртки в ModelChecker: острова UV, счётчики вывернутых и перекрытых, выход за пределы 0–1" }
+        ]},
+        { t: "note", v: "<b>Разделение проверок.</b> Packshoter проверяет параметры сцены — имена, структуру, материалы, текстуры. Соответствие модели референсу (пропорции, цвет, прозрачность, наличие посторонних торговых марок) автоматической проверке не поддаётся и оценивается визуально, в ModelChecker." }
+      ]
+    },
+    /* 3 ─────────────────────────────────────────────────────────── */
+    {
+      id: "process", num: "02", title: "Процесс целиком",
+      sub: "От готовой модели до появления её у получателя. Проверка — не первый шаг, а предпоследний.",
+      blocks: [
+        { t: "flow", v: [
+          { b: "Моделлер", s: "модель готова" },
+          { b: "Packshoter", s: "сцена, проверка, упаковка" },
+          { b: "Хранилище", s: "архив, GLB, превью" },
+          { b: "Таблица", s: "карточка и статус" },
+          { b: "Верификатор", s: "проверка в ModelChecker" },
+          { b: "Получатель", s: "забирает архив" }
+        ], back: "Верификатор нашёл ошибки — моделлеру уходит их список, Моделлер исправляет ошибки и запускаем архивацию заново. Новая версия ложится рядом с прежней, не затирая её." },
+        { t: "steps", v: [
+          { h: "Моделлер закончил модель и запускает Packshoter", p: "Packshoter создает сцену вокруг модели: шаблонную иерархию, окружение, служебные объекты." },
+          { h: "Выбор набора камер и световой схемы", p: "Пятнадцать раскладок камер под тип предмета, одиннадцать студийных схем света и HDRI. Модель автоматически выравнивается в кадре выбранных камер." },
+          { h: "Запекание AO", p: "Карты затенения печутся тут же. Заодно моделлер видит, как модель с ними выглядит, — это первая визуальная проверка." },
+          { h: "Рендер превью", p: "Изображение для карточки модели снимается из той же сцены, теми же камерами и светом." },
+          { h: "Запуск проверки", p: "Сорок пять этапов подряд. Найденное собирается в один список с указанием объекта и кода." },
+          { h: "Ошибки и замечания показываются списком", p: "У ошибок, которые можно исправить автоматически есть кнопка FIX. Нажатие правит ошибку на месте и убирает строку ошибки из списка." },
+          { h: "Упаковка сцены", p: "Если список ошибок пуст - запускается упаковка ZIP - архива. В комментарии архива записывается информация о версии Packshoter, которым он был собран, время когда был создан, темплейт сцены и версия 3dsmax (будет добавлен полигонаж модели и email автора модели)<br><span class=\"warn-line\">Если в списке есть ошибки — упаковка ZIP-архива невозможна</span>"   },
+          { h: "Комплект уходит в хранилище", p: "Загрузка идёт частями, в фоне, отдельным процессом — 3ds Max можно закрыть, отправка продолжится. Загружаются 3 файла: Zip-архив, превью и GLB, хотя все они есть в архиве загружаются отдельно чтобы превью можно было без распаковки архива увидеть превью модели на Airtable и получить прямую ссылку для верификатора<br><span class=\"warn-line\">(ещё не реализовано)</span>" },
+          { h: "Карточка модели обновляется", p: "Путь к файлу, контрольная сумма и статус записываются в таблицу — со стороны сервера, а не с машины моделлера <br><span class=\"warn-line\">(ещё не реализовано)</span>" },
+          { h: "Верификатор осматривает модель", p: "Открывает GLB в ModelChecker и принимает решение: принять или вернуть на доработку." }
+        ]},
+        { t: "h3", v: "Если что-то пошло не так" },
+        { t: "list", v: [
+          "<b>Ошибка в сцене.</b> Упаковка не начинается. Список ошибок остаётся открытым, пока их не исправят — вручную или кнопкой.",
+          "<b>Обрыв связи при отправке.</b> Каждая часть файла отправляется заново до четырёх раз с нарастающей паузой. Короткий обрыв связи проходит незаметно.",
+          "<b>Отправка прервана полностью.</b> Архив остаётся на диске. Повторная отправка начинается с того места, где оборвалась, а не с нуля.",
+          "<b>Файл повреждён в пути.</b> Контрольная сумма считается до отправки и сверяется с той, что вернуло хранилище. Не совпало — модель не принята, и это видно в отчёте.",
+          "<b>Повторная сдача модели.</b> Новая версия не затирает предыдущую, а кладётся рядом. История правок сохраняется."
+        ]}
+      ]
+    },
+    /* 4 ─────────────────────────────────────────────────────────── */
+    {
+      id: "packshoter", num: "03", title: "Packshoter: описание",
+      sub: "Что принимает, что проверяет, что исправляет сам и что отдаёт на выходе.",
+      blocks: [
+        { t: "h3", v: "Как устроен Packshoter" },
+        { t: "p", v: "Три слоя. Тонкий загрузчик на MaxScript даёт пункты меню. <br> Интерфейс и сценарии — на C#. Вся логика проверок и исправлений — на C++" },
+        { t: "p", v: "Работает Packshoter на машине моделлера, внутри процесса 3ds Max. <br> Сеть требуется только на этапе отправки." },
+
+        { t: "h3", v: "Что принимает" },
+        { t: "p", v: "Сцену 3ds Max с заданной структурой: базовая папка, внутри неё <code>scene</code> с файлом сцены, <code>textures</code> с картами и HDR. Имена папок, файлов и объектов подчиняются номенклатуре — она тоже проверяется." },
+
+        { t: "h3", v: "Что проверяет" },
+        { t: "p", v: "Проверки идут восемнадцатью группами. Ниже — состав каждой с примерами реальных замечаний." },
+        { t: "table", head: ["Группа", "Что именно проверяется"], rows: [
+          ["Имя сцены и папки", "Длина имени, кириллица и недопустимые символы, структура имени, наличие папок <code>scene</code> / <code>textures</code> / <code>preview</code>, посторонние файлы и папки"],
+          ["Структура шаблона", "Базовый хелпер сцены, его единственность, иерархия под ним, соответствие шаблону PACKSHOOTER-TEMPLATE"],
+          ["Типы объектов", "В сцене допустимы только разрешённые типы; всё остальное — ошибка"],
+          ["Имена и суффиксы", "Уникальность имён, числовые суффиксы без пропусков, длина имён, только ASCII, соответствие имён материала и объекта — по старой номенклатуре они совпадают, по схеме SC связаны иначе"],
+          ["Геометрия", "Масштаб, модификаторы и анимация, XRef, пустая геометрия, трансформации хелперов, группы (запрещены)"],
+          ["Пивоты", "Пивот модели относительно габаритов, пивоты хелперов и камер, пивоты bulb-геометрии"],
+          ["Полигонаж", "Счётчик полигонов: пять миллионов и выше — ошибка"],
+          ["UV", "Три отдельных набора проверок для новой геометрии, старой и схемы SC; растяжения и масштаб тайла"],
+          ["Группы сглаживания", "Наличие и корректность на всей геометрии"],
+          ["Материалы", "Базовая валидация, соответствие объектам, наличие AO, имена материалов"],
+          ["Параметры материала", "Base Weight, Reflection Color, IOR, анизотропия, рассеивание, покрытие, прозрачность, Bump Amount"],
+          ["Слоты текстур", "Гамма, размытие, смещение размытия, координаты U/V — отдельно для каждого из десяти слотов"],
+          ["Normal Bump", "Множитель, метод Tangent, переворот каналов R и G"],
+          ["Пути к текстурам", "Все карты лежат в <code>scene/textures</code>, путей наружу нет"],
+          ["Файлы текстур", "Наличие <code>_AO.png</code> и <code>_H.png</code> для каждого объекта, HDR в папке текстур, посторонние файлы"],
+          ["Превью", "Ровно один PNG, размер 1000×750, имя совпадает с именем сцены"],
+          ["Камеры и свет", "Количество камер и хелперов, bulb-геометрия и её материалы"],
+          ["Настройки сцены", "Рендерер, единицы измерения, гамма, пустой список Batch Render, Environment and Effects, блокировки трансформаций"]
+        ]},
+
+        { t: "h3", v: "Что исправляет сам" },
+        { t: "p", v: "Триста тринадцать исправлений привязаны к кнопке <span class=\"mark\">FIX</span> рядом со строкой ошибки. Исправлений больше, чем видов ошибок, потому что одно и то же замечание существует отдельно для каждого слота текстуры и правится в каждом по-своему." },
+        { t: "note", v: "<b>Что Packshoter не трогает.</b> Всё, что требует решения человека: слишком высокий полигонаж, растянутая развёртка, пересечения геометрии, неверная форма модели. Такие замечания показываются, но кнопки исправления у них нет — за них отвечает моделлер." },
+
+        { t: "h3", v: "Что отдаёт на выходе" },
+        { t: "list", v: [
+          "<b>Архив сцены</b> — ZIP со сценой, текстурами, превью и экспортами, готовый к передаче.",
+          "<b>GLB</b> — модель для просмотра в браузере, экспортируется заново при каждой упаковке.",
+          "<b>Превью</b> — PNG 1000×750 для карточки модели."
+        ]},
+
+        { t: "h3", v: "Инструменты внутри" },
+        { t: "p", v: "Кроме проверки Packshoter содержит набор инструментов, которыми моделлер пользуется в течение всей работы над сценой." },
+        { t: "table", head: ["Инструмент", "Что делает"], rows: [
+          ["Наборы камер", "Пятнадцать готовых раскладок под тип предмета: диван, шкаф, кресло, ковёр, зеркало, светильник и другие"],
+          ["Световые схемы", "Одиннадцать студийных схем — Butterfly, Rembrandt, Hollywood, Flat, Split и прочие — плюс HDRI и повороты"],
+          ["Pivoter", "Установка пивота объекта в нужную точку габаритов"],
+          ["Bake AO", "Запекание карт ambient occlusion для модели"],
+          ["Nullifier", "Сброс позиции и поворота в ноль"],
+          ["Detacher", "Разбор модели на составные части по определенным правилам"],
+          ["Material Maker", "Сборка материалов по стандарту"],
+          ["Переименование по номенклатуре", "Приведение имён сцены и объектов к принятой схеме"],
+          ["Рендер и просмотр", "AO, Checker, Shading, рендер кадра и оборота, настройка пола"]
+        ]},
+        { t: "note", v: "<b>Аксессуаризация.</b> Отдельный процесс: модель собирается из сменных аксессуаров, из которых потом получаются варианты одного изделия — с разными подушками, полками или фурнитурой. Проверки для него в Packshoter есть и работают. <b>Для Physicl этот процесс неактуален</b> — он остался от прежнего заказчика и в текущем конвейере не используется." }
+      ]
+    },
+    /* 5 ─────────────────────────────────────────────────────────── */
+    {
+      id: "checker", num: "04", title: "ModelChecker: описание",
+      sub: "Визуальная проверка готовой модели в браузере, без 3ds Max и без распаковки архива.",
+      blocks: [
+        { t: "p", v: "ModelChecker открывает GLB прямо в браузере по ссылке из Airtable" },
+        { t: "h3", v: "Что принимает" },
+        { t: "p", v: "GLB — по ссылке или перетаскиванием в окно. Дополнительно можно подставить свой HDR, чтобы смотреть модель в нужном освещении. <b>Перетащенный файл никуда не отправляется</b> — его читает сам браузер, на сервер он не попадает." },
+        { t: "h3", v: "Двенадцать режимов визуальной проверки" },
+        { t: "table", head: ["Режим", "Что показывает"], rows: [
+          ["Shaded", "Модель как она есть, со всеми материалами"],
+          ["Base color", "Только карта базового цвета, без освещения"],
+          ["Roughness", "Канал шероховатости"],
+          ["Metalness", "Канал металличности"],
+          ["Normal", "Карта нормалей как текстура"],
+          ["Emissive", "Свечение"],
+          ["AO map", "Запечённая карта затенения"],
+          ["Clay", "Тёмный материал без текстур — форма читается по бликам"],
+          ["Normal check", "Тот же материал, но с картой нормалей: видно её изъяны"],
+          ["UV checker", "Клетчатая текстура: видно растяжения развёртки и масштаб тайла"],
+          ["Backfaces", "Изнанка полигонов красным"],
+          ["Normals", "Нормали геометрии цветом"]
+        ]},
+        { t: "h3", v: "Дополнительные функции" },
+        { t: "list", v: [
+          "<b>Дерево сцены</b> — структура модели, выделение и изоляция объектов.",
+          "<b>Габариты</b> — размеры модели в осях.",
+          "<b>Пивот</b> — где находится опорная точка.",
+          "<b>Каркас</b> — сетка поверх модели.",
+          "<b>Раскладка UV</b> — развёртка отдельной панелью.",
+          "<b>Своё окружение</b> — можно подставить HDR и смотреть модель в нужном свете."
+        ]},
+        { t: "note", v: "<b>ModelChecker ничего не исправляет.</b> Это смотровое окно, а не редактор: он показывает модель так, чтобы изъяны стали очевидны, но решение принимает человек. Исправления делаются в 3ds Max, и модель сдаётся заново." },
+        { t: "h3", v: "Где размещён" },
+        { t: "p", v: "Веб-приложение на Cloudflare Workers, отрисовка на three.js. <br> Страница закрыта входом через Google: пускает только сотрудников рабочего домена и поимённый список исключений." }
+      ]
+    },
+    /* 6 ─────────────────────────────────────────────────────────── */
+    {
+      id: "arch", num: "05", title: "Архитектура",
+      sub: "Кто где работает, что хранит и кто принимает решения.",
+      blocks: [
+        { t: "arch", v: {
+          lanes: [
+            { who: "Машина моделлера", boxes: [
+              { b: "3ds Max + Packshoter", s: "Проверка, исправления, упаковка. Секретов не хранит", key: true },
+              { b: "Отдельный процесс отправки", s: "Грузит архив частями; Max можно закрыть" }
+            ]},
+            { who: "Сервер", boxes: [
+              { b: "Воркер (API)", s: "Проверяет, кто пришёл и какая у него роль. Здесь живут все ключи", key: true }
+            ]},
+            { who: "Хранилище", boxes: [
+              { b: "Промежуточное хранилище", s: "Архив, GLB и превью на время проверки" }
+            ]},
+            { who: "Учёт", boxes: [
+              { b: "Таблица моделей", s: "Карточка, путь к файлу, статус. Записи делает воркер" }
+            ]},
+            { who: "Верификатор", boxes: [
+              { b: "ModelChecker в браузере", s: "Визуальная проверка GLB, решение принять или вернуть" }
+            ]},
+            { who: "Получатель", boxes: [
+              { b: "Постоянное хранилище", s: "Принятые модели забирает и хранит получатель", cold: true }
+            ]}
+          ]
+        }},
+        { t: "h3", v: "Как это читается" },
+        { t: "list", v: [
+          "<b>Файл не проходит через сервер.</b> Архив идёт с машины моделлера в хранилище напрямую. Сервер только выдаёт разрешение на запись — так большие сцены не упираются в ограничения на размер запроса.",
+          "<b>Решения принимает сервер.</b> Куда класть файл, определяет роль человека, а роль берётся из таблицы. Packshoter на это повлиять не может.",
+          "<b>Записи в таблицу делает сервер.</b> Ключ доступа к базе не покидает серверную часть и на машины моделлеров не попадает.",
+          "<b>Наше хранилище временное.</b> Оно нужно на время проверки. Принятые модели забирает получатель и хранит у себя — оттуда их берут артисты в дальнейшей работе."
+        ]}
+      ]
+    },
+    /* 7 ─────────────────────────────────────────────────────────── */
+    {
+      id: "integration", num: "06", title: "Интеграция",
+      sub: "Как устроен обмен со стороны, которая будет забирать модели.",
+      blocks: [
+        { t: "p", v: "Обмен построен на запросах к воркеру. Внешняя сторона обращается к нему, подтверждает, кто она, и получает разрешение на скачивание конкретного файла — действующее ограниченное время и только на чтение. Постоянных ключей от хранилища наружу не выдаётся." },
+        { t: "list", v: [
+          "<b>Что хранится в карточке модели.</b> Путь к файлу, контрольная сумма и статус. По пути файл забирается, по контрольной сумме проверяется, что он скачан без повреждений.",
+          "<b>Разрешение выдаётся на один файл.</b> Оно не даёт доступа ни к другим моделям, ни к записи, и перестаёт действовать через несколько минут.",
+          "<b>Начатая передача не обрывается.</b> Срок ограничивает только начало скачивания; уже идущая передача доходит до конца.",
+          "<b>Докачка поддерживается.</b> Прерванное скачивание продолжается с того места, где остановилось."
+        ]},
+        { t: "note red", v: "<b>Интеграции с Airtable пока нет.</b> Схема обмена не согласована и не описана, поля в таблице не определены, и сама связка не построена. Это ближайшая работа, и она зависит от того, как будет устроено хранилище — см. раздел о текущем состоянии." }
+      ]
+    },
+    /* 8 ─────────────────────────────────────────────────────────── */
+    {
+      id: "security", num: "07", title: "Доступ и безопасность",
+      sub: "Ответы на вопросы, заданные при подготовке передачи.",
+      blocks: [
+        { t: "qa", v: [
+          { q: "Как пользователь входит?", a: "Через Google, стандартным способом для настольных приложений. Пароль вводится на странице Google, приложение его не видит. Сессия сохраняется между запусками 3ds Max и продлевается без повторного входа." },
+          { q: "Как сервер убеждается, что это действительно он?", a: "Удостоверение, которое приносит Packshoter, проверяется по подписи открытыми ключами Google. Без этой проверки любой мог бы сочинить себе удостоверение с чужим адресом." },
+          { q: "Какие есть роли и откуда они берутся?", a: "Роль хранится в таблице моделлеров и читается сервером при каждом запросе. От роли зависит, разрешена ли загрузка и в какую папку попадёт файл. В самой программе ролей нет." },
+          { q: "Где хранятся ключи?", a: "Все — на стороне сервера: ключ к хранилищу, токен таблицы, секрет приложения Google. В программе на машине моделлера нет ни одного из них." },
+          { q: "Что доступно Packshoter?", a: "Публичный идентификатор приложения Google, адрес сервера и собственное удостоверение пользователя, зашифрованное средствами Windows под его учётную запись." },
+          { q: "Как выдаётся разрешение на запись и надолго ли?", a: "Сервер выписывает подписанную ссылку на конкретный путь, только на запись, сроком на пятнадцать минут. Перехваченная ссылка не даёт ни читать чужое, ни писать в другое место, ни воспользоваться ею завтра." },
+          { q: "Кто определяет, куда попадёт файл?", a: "Только сервер. Он смотрит роль и сам формирует путь." },
+          { q: "Может ли программа выбрать другое место?", a: "Нет. Packshoter не передаёт путь и не может на него повлиять — он лишь сообщает артикул модели." },
+          { q: "Что будет, если программу разберут или изменят?", a: "Ключей в ней нет, поэтому украсть из неё нечего. Изменённая копия не получит больше прав: все решения принимает сервер, а он проверяет удостоверение и роль при каждом обращении." },
+          { q: "Как отозвать доступ?", a: "Снять отметку активности в таблице. Роль проверяется при каждом запросе, поэтому доступ пропадает сразу, а не после истечения сессии." }
+
+        ]}
+      ]
+    },
+    /* 9 ─────────────────────────────────────────────────────────── */
+    {
+      id: "status", num: "08", title: "Текущее состояние",
+      sub: "Что работает, что в работе и что мешает продвинуться дальше.",
+      blocks: [
+        { t: "statustable", head: ["Состояние", "Что именно"], rows: [
+          ["ok", "Проверка сцены и автоисправления — работают"],
+          ["ok", "Упаковка архива, экспорт GLB и превью"],
+          ["ok", "Вход через Google с проверкой подписи, роли и назначения"],
+          ["ok", "ModelChecker: проверка GLB, двенадцать режимов, вход по домену"],
+          ["ok", "Отправка файла частями, повторы при обрыве, сверка контрольной суммы"],
+          ["ok", "Отправка отдельным процессом: 3ds Max можно закрыть во время загрузки"],
+          ["wip", "Промежуточное хранилище — схема согласована, подключение не сделано"],
+          ["wip", "Запись карточек в таблицу — поля определены, связка не построена"],
+          ["wip", "Докачка после перезапуска компьютера"],
+          ["no", "Список моделлеров и ролей — сейчас заглушка вместо таблицы"],
+          ["no", "Передача принятых моделей получателю и уборка у себя"]
+        ]},
+        { t: "h3", v: "Уточнения для интеграции" },
+        { t: "qa", v: [
+          { q: "Какая система запускает проверку сцены в Packshoter?", a: "Никакая. Её запускает моделлер вручную, из меню 3ds Max на своей машине. Автоматического запуска нет и быть не может: проверка работает с открытой сценой внутри 3ds Max. Запроса вида «отправить модель на проверку» не существует и не планируется." },
+          { q: "А кто запускает ModelChecker?", a: "Верификатор, вручную, когда берёт модель в работу. Как до него доходит, что модель ждёт осмотра, — вопрос к стороне Airtable: очередь на проверку ведётся там, а не у нас.<br><br><b>Наше предложение.</b> Как только статус становится <code>uploaded</code>, модель попадает в представление «на проверку». В карточке стоит постоянная ссылка, которая открывает ModelChecker сразу на этой модели — верификатору не нужно ничего искать и скачивать. Решение он ставит в той же карточке: <code>approved</code> или <code>rejected</code>, и при возврате пишет причину." },
+          { q: "Что возвращает ModelChecker?", a: "Ничего. Это смотровое окно: оно загружает GLB и показывает его в разных режимах. Результат визуальной проверки — решение верификатора, которое он ставит в карточке модели. Файлов ModelChecker не создаёт и не изменяет." },
+          { q: "Какие бывают статусы?", a: "Три ставит наша сторона по ходу загрузки, остальные — верификатор и программа получателя. Полный перечень в таблице ниже." },
+          { q: "Какие форматы и размеры?", a: "На входе: сцена 3ds Max, текстуры PNG 4096x4096, окружение HDR. На выходе один ZIP — внутри сцена с текстурами, превью PNG 1000×750 и экспорты GLB, FBX, OBJ; <br> GLB и превью дополнительно выкладываются отдельными файлами. <br> Архив обычно весит 100–600 МБ, изредка до 2–4 ГБ. Жёсткого потолка нет: загрузка идёт частями." },
+          { q: "Сколько файлы хранятся у нас?", a: "До отметки «забрано» плюс несколько дней запаса — на случай, если файл придётся забрать повторно. По таймеру не удаляем: иначе есть риск стереть то, что забрать ещё не успели. Точный срок запаса не назначен, он зависит от того, как часто будет забирать получатель." },
+          { q: "Что происходит при повторной сдаче модели?", a: "Появляется новая версия рядом с предыдущей, перезаписи нет. Прерванная загрузка продолжается с места обрыва и второй копии не создаёт. Дубликата карточки тоже не возникает: карточку заводит сервер один раз, в момент начала загрузки." },
+          { q: "Как результат попадает в Airtable?", a: "Мы не шлём ни webhook, ни ответ на запрос. Карточку в таблице заполняет наш сервер сам, по ходу и по завершении загрузки. Сторона получателя работает с таблицей: читает статус и путь к файлу, забирает архив и ставит отметку «забрано». Отдельного интерфейса для этого не требуется." },
+          { q: "Есть ли список кодов ошибок?", a: "Коды относятся к проверке сцены и видны моделлеру в 3ds Max — это ошибки модели, а не обмена. Кодов ошибок интеграции нет, потому что нет интерфейса, который бы их возвращал: результат попадает в карточку статусом, а причина отказа — текстом в отдельном поле." },
+          { q: "Есть ли тестовый доступ и тестовые модели?", a: "Пока нет. Тестовая среда появится вместе с хранилищем — до его подключения выдавать нечего. Набор тестовых моделей с заранее известным результатом проверки соберём тогда же." }
+        ]},
+        { t: "table", head: ["Статус", "Что означает", "Кто ставит"], rows: [
+          ["<code>uploading</code>", "Загрузка началась. Карточка создана заранее, чтобы недогруженный архив был виден", "наш сервер"],
+          ["<code>uploaded</code>", "Архив принят хранилищем, целостность подтверждена", "наш сервер"],
+          ["<code>failed</code>", "Загрузка не удалась, причина — в отдельном поле", "наш сервер"],
+          ["<code>approved</code> / <code>rejected</code>", "Решение по итогам визуальной проверки модели", "верификатор"],
+          ["<code>collected</code>", "Архив забран в постоянное хранилище. По этой отметке мы удаляем свою копию", "программа получателя"]
+        ]},
+        { t: "h3", v: "Что мешает" },
+        { t: "list", v: [
+          "<b>Не решено, на чьей стороне заводится хранилище.</b> От этого зависит, нужны ли нам ключи от него и нужен ли отдельный способ выдавать доступ получателю.",
+          "<b>Нет доступа к таблице моделлеров.</b> Пока список ролей — заглушка. Как только появится доступ, замена сводится к одному файлу.",
+          "<b>Не подтверждено, чем именно получатель отмечает, что забрал модель.</b> От этого зависит, когда мы удаляем файл у себя."
+        ]}
+      ]
+    }
+  ],
+  footer: ["Packshoter · внутренний документ от    18.09.2026"]
+};
+
+/* ─────────────────────────── ENGLISH ─────────────────────────── */
+CONTENT.en = {
+  sub: "A 3ds Max plugin for validating, standardising and packaging 3D models",
+  statusLabels: { ok:"done", wip:"under way", no:"not yet" },
+  shotLabel: "screenshot to follow",
+  hero: {
+    eyebrow: "Technical description",
+    h1: "",
+    lede: "Packshoter is a plugin for 3ds Max. It builds the shooting scene around a finished model, places the cameras and lights, frames the model, bakes AO and renders the preview. It then puts the scene through forty-five stages of checks, clears three hundred common errors at a single click and assembles the finished ZIP archive, which holds:<br><span class=\"lede-list\">— the 3ds Max scene with its textures<br>— the 1000×750 preview<br>— the exports: GLB, FBX, OBJ</span><br><br>Alongside Packshoter comes ModelChecker, which lets the model be examined by eye in a browser: first by the modeller, and once it has been submitted, by the verifier.",
+    stats: [
+      { n: "45", l: "stages of checks", h: "from names and folders to UVs and materials" },
+      { n: "~280", l: "kinds of error", h: "each with a code of its own" },
+      { n: "313", l: "automatic fixes", h: "one click on FIX, nothing edited by hand" },
+      { n: "12", l: "visual inspection modes", h: "in ModelChecker, in the browser" }
+    ]
+  },
+  toc: "Contents",
+  sections: [
+    /* 1 ─────────────────────────────────────────────────────────── */
+    {
+      id: "tools", num: "01", title: "Two tools",
+      sub: "Packshoter runs in 3ds Max on the modeller's machine; ModelChecker runs in the browser, for the modeller and the verifier alike.",
+      blocks: [
+        { t: "cards", v: [
+          { tag: "3ds Max · the modeller's desk", h: "Packshoter", p: "Scene assembly, cameras, lighting, AO baking, preview rendering, scene checks, automatic fixes, packaging. This is where the model is built and brought up to standard." },
+          { tag: "Browser · the verifier's desk", h: "ModelChecker", p: "Visual inspection of the finished GLB in twelve modes: material maps one at a time, form without textures, normals, back faces, UV layout. It changes nothing — it only shows." }
+        ]},
+        { t: "shots", v: [
+          { src: "img/packshoter-main.png", cap: "Packshoter in 3ds Max: camera and light sets, floor setup, pivot placement, the error list with its FIX buttons, the material builder and Detacher" },
+          { src: "img/modelchecker.png", cap: "ModelChecker: the scene tree with a polygon count per object, the model's dimensions in millimetres, and twelve visual inspection modes" },
+          { src: "img/packshoter-cameras.png", cap: "What the camera sets produce: nine views of one model. The header carries the dimensions, the 3ds Max version, the scene template version, the Packshoter version and the pivot point" },
+          { src: "img/modelchecker-uv.png", cap: "UV inspection in ModelChecker: the UV islands, counts of inverted and overlapping faces, and anything falling outside 0–1" }
+        ]},
+        { t: "note", v: "<b>Separation of checks.</b> Packshoter checks the scene’s parameters — names, structure, materials, textures. Whether the model matches its reference (proportions, colour, transparency, the presence of stray brand marks) is not something code can verify; it is assessed visually, in ModelChecker." }
+      ]
+    },
+    /* 3 ─────────────────────────────────────────────────────────── */
+    {
+      id: "process", num: "02", title: "The process end to end",
+      sub: "From a finished model to its arrival at the recipient. Checking is not the first step but the second to last.",
+      blocks: [
+        { t: "flow", v: [
+          { b: "Modeller", s: "model finished" },
+          { b: "Packshoter", s: "scene, checks, packaging" },
+          { b: "Storage", s: "archive, GLB, preview" },
+          { b: "Table", s: "record and status" },
+          { b: "Verifier", s: "inspection in ModelChecker" },
+          { b: "Recipient", s: "collects the archive" }
+        ], back: "The verifier has found errors: the modeller receives the list of them, corrects the model and runs the packaging again. The new version is placed beside the previous one rather than overwriting it." },
+        { t: "steps", v: [
+          { h: "The modeller finishes the model and starts Packshoter", p: "Packshoter builds the scene around the model: the template hierarchy, the environment and the supporting objects." },
+          { h: "Choosing a camera set and a lighting rig", p: "Fifteen camera layouts by product type, eleven studio lighting rigs, and HDRI. The model is framed in the chosen cameras automatically." },
+          { h: "Baking AO", p: "The occlusion maps are baked right there. It also lets the modeller see how the model reads with them — the first visual check." },
+          { h: "Rendering the preview", p: "The image for the model record is taken from the same scene, with the same cameras and lighting." },
+          { h: "The checks are run", p: "Forty-five stages, one after another. Everything found is gathered into a single list naming the object and the code." },
+          { h: "Errors and findings appear as a list", p: "Errors that can be corrected automatically carry a FIX button. One click corrects the error in place and removes its line from the list." },
+          { h: "Packaging the scene", p: "If the list is empty, the ZIP archive is packaged. The archive comment records which version of Packshoter built it, when it was created, the scene template and the 3ds Max version (the polygon count and the author's e-mail address are still to be added)<br><span class=\"warn-line\">While the list still holds errors, the archive cannot be packaged</span>" },
+          { h: "The set goes to storage", p: "The upload runs in parts, in the background, as a separate process — 3ds Max may be closed and the transfer carries on. Three files are uploaded: the ZIP archive, the preview and the GLB. All three are already inside the archive, but they are sent separately so that the preview can be seen in Airtable without unpacking anything and so that the verifier can be given a direct link<br><span class=\"warn-line\">(not built yet)</span>" },
+          { h: "The model record is updated", p: "The file path, the checksum and the status are written to the table — from the server side, not from the modeller's machine <br><span class=\"warn-line\">(not built yet)</span>" },
+          { h: "The verifier inspects the model", p: "Opens the GLB in ModelChecker and decides: accept it, or send it back for rework." }
+        ]},
+        { t: "h3", v: "If something goes wrong" },
+        { t: "list", v: [
+          "<b>An error in the scene.</b> Packaging does not begin. The list stays open until the errors are cleared, by hand or by button.",
+          "<b>The connection drops during upload.</b> Each part is resent up to four times, with a growing pause between attempts. A brief drop passes unnoticed.",
+          "<b>The upload is interrupted altogether.</b> The archive stays on disk. Sending it again resumes from where it broke off rather than starting over.",
+          "<b>The file is damaged in transit.</b> The checksum is computed before sending and compared with the one storage returns. If they differ, the model is not accepted, and the report says so.",
+          "<b>The model is submitted again.</b> The new version does not overwrite the previous one but sits beside it. The revision history is preserved."
+        ]}
+      ]
+    },
+    /* 4 ─────────────────────────────────────────────────────────── */
+    {
+      id: "packshoter", num: "03", title: "Packshoter: description",
+      sub: "What it takes in, what it checks, what it corrects itself, and what it produces.",
+      blocks: [
+        { t: "h3", v: "How Packshoter is built" },
+        { t: "p", v: "Three layers. A thin MaxScript loader provides the menu entries. The interface and the workflows are in C#. All the checking and fixing logic is in C++. The heavy work lives in C++ precisely for the sake of speed: checking a scene of several hundred objects has to take seconds, not minutes." },
+        { t: "p", v: "Packshoter runs entirely on the modeller's machine, inside the 3ds Max process. No server component is needed for the checks — the network is only required when the files are sent." },
+
+        { t: "h3", v: "What it takes in" },
+        { t: "p", v: "A 3ds Max scene with a prescribed structure: a base folder holding <code>scene</code> with the scene file and <code>textures</code> with the maps and the HDR. Folder, file and object names follow the naming convention — that is checked as well." },
+
+        { t: "h3", v: "What it checks" },
+        { t: "p", v: "The checks are organised in eighteen groups. Below is what each of them covers, with examples of real findings." },
+        { t: "table", head: ["Group", "What exactly is checked"], rows: [
+          ["Scene name and folders", "Name length, Cyrillic and illegal characters, the structure of the name, the presence of <code>scene</code> / <code>textures</code> / <code>preview</code>, stray files and folders"],
+          ["Template structure", "The scene's base helper, that there is only one of it, the hierarchy beneath it, conformance to the PACKSHOOTER-TEMPLATE"],
+          ["Object types", "Only permitted types may appear in the scene; anything else is an error"],
+          ["Names and suffixes", "Uniqueness, numeric suffixes with no gaps, name length, ASCII only, the relationship between material and object names — under the old convention they match, under the SC scheme they are tied differently"],
+          ["Geometry", "Scale, modifiers and animation, XRefs, empty geometry, helper transforms, groups (not permitted)"],
+          ["Pivots", "The model pivot against the bounding box, helper and camera pivots, bulb geometry pivots"],
+          ["Polygon count", "The counter: five million and above is an error"],
+          ["UVs", "Three separate sets of checks — for new geometry, for legacy geometry and for the SC scheme; stretching and tile scale"],
+          ["Smoothing groups", "Present and correct across all geometry"],
+          ["Materials", "Base validation, assignment to objects, the presence of AO, material names"],
+          ["Material parameters", "Base Weight, Reflection Color, IOR, anisotropy, scattering, coating, transparency, Bump Amount"],
+          ["Texture slots", "Gamma, blur, blur offset, U/V coordinates — separately for each of the ten slots"],
+          ["Normal Bump", "The multiplier, the Tangent method, the red and green channel flips"],
+          ["Texture paths", "Every map sits in <code>scene/textures</code>; no path points outside it"],
+          ["Texture files", "An <code>_AO.png</code> and an <code>_H.png</code> for every object, the HDR in the textures folder, stray files"],
+          ["Preview", "Exactly one PNG, 1000×750, its name matching the scene name"],
+          ["Cameras and lights", "The number of cameras and helpers, the bulb geometry and its materials"],
+          ["Scene settings", "Renderer, units, gamma, an empty Batch Render list, Environment and Effects, transform locks"]
+        ]},
+
+        { t: "h3", v: "What it corrects itself" },
+        { t: "p", v: "Three hundred and thirteen fixes sit behind the <span class=\"mark\">FIX</span> button next to the line of the error. There are more fixes than kinds of error because one and the same finding exists separately for every texture slot and is corrected differently in each of them." },
+        { t: "note", v: "<b>What Packshoter leaves alone.</b> Everything that calls for a human decision: an excessive polygon count, stretched UVs, intersecting geometry, a shape that is simply wrong. Such findings are shown but carry no fix button — they are the modeller's responsibility." },
+
+        { t: "h3", v: "What it produces" },
+        { t: "list", v: [
+          "<b>The scene archive</b> — a ZIP holding the scene, its textures, the preview and the exports, ready to be handed over.",
+          "<b>The GLB</b> — the model for viewing in a browser, re-exported at every packaging run.",
+          "<b>The preview</b> — a 1000×750 PNG for the model record."
+        ]},
+
+        { t: "h3", v: "The tools inside" },
+        { t: "p", v: "Besides the checks, Packshoter carries a set of tools the modeller uses throughout the work on a scene." },
+        { t: "table", head: ["Tool", "What it does"], rows: [
+          ["Camera sets", "Fifteen ready layouts by product type: sofa, bookcase, armchair, rug, mirror, floor lamp and others"],
+          ["Lighting rigs", "Eleven studio rigs — Butterfly, Rembrandt, Hollywood, Flat, Split and the rest — plus HDRI and rotation"],
+          ["Pivoter", "Places an object's pivot at the required point of its bounding box"],
+          ["Bake AO", "Bakes the ambient occlusion maps for the model"],
+          ["Nullifier", "Resets position and rotation to zero"],
+          ["Detacher", "Breaks a model into its component parts according to set rules"],
+          ["Material Maker", "Builds materials to the standard"],
+          ["Renaming to the convention", "Brings scene and object names into the agreed scheme"],
+          ["Rendering and preview", "AO, Checker, Shading, still and turntable rendering, floor setup"]
+        ]},
+        { t: "note", v: "<b>Accessorisation.</b> A process in its own right: the model is assembled from interchangeable accessories, which then yield variants of the same product — different cushions, shelves or fittings. The checks for it exist in Packshoter and work. <b>For Physicl this process is not relevant</b> — it remains from a previous client and plays no part in the current pipeline." }
+      ]
+    },
+    /* 5 ─────────────────────────────────────────────────────────── */
+    {
+      id: "checker", num: "04", title: "ModelChecker: description",
+      sub: "Visual inspection of the finished model in a browser, without 3ds Max and without unpacking the archive.",
+      blocks: [
+        { t: "p", v: "ModelChecker opens a GLB straight in the browser. The verifier needs neither 3ds Max nor a licence for it nor an unpacked archive — a link is enough." },
+        { t: "h3", v: "What it takes in" },
+        { t: "p", v: "A GLB, either from a link or dropped into the window. An HDR of your own can be added on top, to view the model under the lighting you need. <b>A dropped file is not sent anywhere</b> — the browser reads it locally and it never reaches the server." },
+        { t: "h3", v: "Twelve visual inspection modes" },
+        { t: "table", head: ["Mode", "What it shows"], rows: [
+          ["Shaded", "The model as it stands, with all its materials"],
+          ["Base color", "The base colour map alone, unlit"],
+          ["Roughness", "The roughness channel"],
+          ["Metalness", "The metalness channel"],
+          ["Normal", "The normal map as a texture"],
+          ["Emissive", "Emission"],
+          ["AO map", "The baked occlusion map"],
+          ["Clay", "A dark, untextured material — the form reads through the highlights"],
+          ["Normal check", "The same material with the normal map applied: its flaws become visible"],
+          ["UV checker", "A chequered texture: stretching and tile scale become visible"],
+          ["Backfaces", "Back faces in red"],
+          ["Normals", "Geometry normals shown as colour"]
+        ]},
+        { t: "h3", v: "Additional features" },
+        { t: "list", v: [
+          "<b>Scene tree</b> — the structure of the model, with selection and isolation.",
+          "<b>Dimensions</b> — the size of the model along each axis.",
+          "<b>Pivot</b> — where the anchor point sits.",
+          "<b>Wireframe</b> — the mesh over the model.",
+          "<b>UV layout</b> — the unwrap in a panel of its own.",
+          "<b>Your own environment</b> — drop in an HDR and view the model under the light you need."
+        ]},
+        { t: "note", v: "<b>ModelChecker corrects nothing.</b> It is a viewing window, not an editor: it presents the model so that its flaws become obvious, but the decision rests with a person. Corrections are made in 3ds Max, and the model is submitted again." },
+        { t: "h3", v: "Where it is hosted" },
+        { t: "p", v: "A web application on Cloudflare Workers, rendering with three.js. <br> The page sits behind Google sign-in: it admits only staff on the working domain, plus a named list of exceptions." }
+      ]
+    },
+    /* 6 ─────────────────────────────────────────────────────────── */
+    {
+      id: "arch", num: "05", title: "Architecture",
+      sub: "Who runs where, what holds what, and who takes the decisions.",
+      blocks: [
+        { t: "arch", v: {
+          lanes: [
+            { who: "Modeller's machine", boxes: [
+              { b: "3ds Max + Packshoter", s: "Checks, fixes, packaging. Holds no secrets", key: true },
+              { b: "Separate upload process", s: "Sends the archive in parts; Max may be closed" }
+            ]},
+            { who: "Server", boxes: [
+              { b: "Worker (API)", s: "Confirms who is calling and what their role is. Every key lives here", key: true }
+            ]},
+            { who: "Storage", boxes: [
+              { b: "Interim storage", s: "Archive, GLB and preview for the duration of the review" }
+            ]},
+            { who: "Records", boxes: [
+              { b: "Model table", s: "Record, file path, status. Written by the worker" }
+            ]},
+            { who: "Verifier", boxes: [
+              { b: "ModelChecker in the browser", s: "Visual inspection of the GLB, the decision to accept or return" }
+            ]},
+            { who: "Recipient", boxes: [
+              { b: "Permanent storage", s: "Accepted models are collected and kept by the recipient", cold: true }
+            ]}
+          ]
+        }},
+        { t: "h3", v: "How to read this" },
+        { t: "list", v: [
+          "<b>The file does not pass through the server.</b> The archive travels from the modeller's machine straight to storage. The server only grants permission to write — which is why large scenes never run into a limit on request size.",
+          "<b>The server takes the decisions.</b> Where a file goes is determined by the person's role, and the role comes from the table. Packshoter has no say in it.",
+          "<b>The server writes the records.</b> The table's access key never leaves the server side and never reaches a modeller's machine.",
+          "<b>Our storage is temporary.</b> It exists for the duration of the review. Accepted models are collected by the recipient and kept there — and that is where the artists draw them from afterwards."
+        ]}
+      ]
+    },
+    /* 7 ─────────────────────────────────────────────────────────── */
+    {
+      id: "integration", num: "06", title: "Integration",
+      sub: "How the exchange works for the side that will be collecting the models.",
+      blocks: [
+        { t: "p", v: "The exchange is built on requests to the worker. The external side calls it, confirms who it is, and receives permission to download one particular file — valid for a limited time and for reading only. No permanent storage keys are handed out." },
+        { t: "list", v: [
+          "<b>What the model record holds.</b> The file path, the checksum and the status. The path is where the file is collected from; the checksum confirms it arrived intact.",
+          "<b>Permission covers a single file.</b> It grants access neither to other models nor to writing, and it stops working after a few minutes.",
+          "<b>A transfer already under way is not cut off.</b> The expiry limits only the start of a download; one that is running goes through to the end.",
+          "<b>Resuming is supported.</b> An interrupted download continues from the point where it stopped."
+        ]},
+        { t: "note red", v: "<b>There is no Airtable integration yet.</b> The exchange has not been agreed or described, the table fields have not been defined, and the link itself has not been built. It is the next piece of work, and it depends on how storage is arranged — see the section on the current state." }
+      ]
+    },
+    /* 8 ─────────────────────────────────────────────────────────── */
+    {
+      id: "security", num: "07", title: "Access and security",
+      sub: "Answers to the questions raised in preparing this hand-over.",
+      blocks: [
+        { t: "qa", v: [
+          { q: "How does a user sign in?", a: "Through Google, by the flow standard for desktop applications. The password is entered on Google's own page; the application never sees it. The session survives restarts of 3ds Max and renews itself without a further sign-in." },
+          { q: "How does the server satisfy itself that it really is them?", a: "The identity Packshoter presents is verified by its signature against Google's public keys. Without that check, anyone could compose an identity carrying somebody else's address." },
+          { q: "What roles exist, and where do they come from?", a: "The role is held in the modellers' table and read by the server on every request. It determines whether uploading is permitted and which folder the file lands in. The application itself holds no roles." },
+          { q: "Where are the keys kept?", a: "All of them on the server side: the storage key, the table token, the Google application secret. Not one of them is present in the program on a modeller's machine." },
+          { q: "What is available to Packshoter?", a: "The public Google application identifier, the server address, and the user's own identity, encrypted by Windows under their account." },
+          { q: "How is permission to write issued, and for how long?", a: "The server signs a link for one particular path, for writing only, valid for fifteen minutes. An intercepted link allows neither reading somebody else's data, nor writing elsewhere, nor being used tomorrow." },
+          { q: "Who determines where the file goes?", a: "The server alone. It reads the role and composes the path itself." },
+          { q: "Can the program choose a different destination?", a: "No. Packshoter sends no path and has no influence over it — all it states is the model's article number." },
+          { q: "What happens if the program is taken apart or modified?", a: "It holds no keys, so there is nothing in it to steal. A modified copy gains no additional rights: every decision is the server's, and it verifies identity and role on each call." },
+          { q: "How is access revoked?", a: "By clearing the active flag in the table. The role is checked on every request, so access ends at once rather than when a session expires." }
+        ]}
+      ]
+    },
+    /* 9 ─────────────────────────────────────────────────────────── */
+    {
+      id: "status", num: "08", title: "Current state",
+      sub: "What works, what is under way, and what stands in the way of going further.",
+      blocks: [
+        { t: "statustable", head: ["State", "What exactly"], rows: [
+          ["ok", "Scene checks and automatic fixes — working"],
+          ["ok", "Archive packaging, GLB export and preview"],
+          ["ok", "Google sign-in with signature verification, role and destination"],
+          ["ok", "ModelChecker: GLB inspection, twelve modes, sign-in by domain"],
+          ["ok", "Upload in parts, retries on dropped connections, checksum verification"],
+          ["ok", "Upload as a separate process: 3ds Max may be closed mid-transfer"],
+          ["wip", "Interim storage — the scheme is agreed, the connection has not been made"],
+          ["wip", "Writing records to the table — the fields are defined, the link is not built"],
+          ["wip", "Resuming an upload after the machine restarts"],
+          ["no", "The modellers and roles table — a stub stands in for it at present"],
+          ["no", "Handing accepted models to the recipient and clearing them from our side"]
+        ]},
+        { t: "h3", v: "Points of clarification for the integration" },
+        { t: "qa", v: [
+          { q: "Which system starts the scene checks in Packshoter?", a: "None. The modeller starts them by hand, from the 3ds Max menu on their own machine. There is no automatic start and there cannot be one: the checks work on a scene open inside 3ds Max. A call along the lines of “submit this model for checking” does not exist and is not planned." },
+          { q: "And who starts ModelChecker?", a: "The verifier, by hand, when they take a model on. How word reaches them that a model is waiting is a question for the Airtable side: the review queue is kept there, not with us.<br><br><b>What we suggest.</b> As soon as the status becomes <code>uploaded</code>, the model appears in a “to review” view. The record carries a permanent link that opens ModelChecker on that very model — the verifier has nothing to search for and nothing to download. The decision goes into the same record: <code>approved</code> or <code>rejected</code>, with the reason written down when a model is returned." },
+          { q: "What does ModelChecker return?", a: "Nothing. It is a viewing window: it loads the GLB and shows it in various modes. The outcome of the visual inspection is the verifier's decision, which they enter in the model record. ModelChecker neither creates nor alters any file." },
+          { q: "What statuses are there?", a: "Three are set by our side as the upload proceeds; the rest by the verifier and by the recipient's program. The full list is in the table below." },
+          { q: "What formats and sizes?", a: "Coming in: a 3ds Max scene, PNG textures at 4096×4096, an HDR for the environment. Going out: a single ZIP holding the scene with its textures, a 1000×750 PNG preview and the GLB, FBX and OBJ exports; <br> the GLB and the preview are additionally placed as separate files. <br> The archive usually weighs 100–600 MB, occasionally up to 2–4 GB. There is no hard ceiling: the upload runs in parts." },
+          { q: "How long do files stay with us?", a: "Until the “collected” flag is set, plus a few days in reserve, in case a file has to be collected a second time. We do not delete on a timer: that would risk erasing something nobody has managed to collect yet. The exact reserve has not been fixed; it depends on how often the recipient collects." },
+          { q: "What happens when a model is submitted again?", a: "A new version appears beside the previous one; nothing is overwritten. An interrupted upload resumes from where it broke off and creates no second copy. Nor does a duplicate record appear: the server creates the record once, when the upload begins." },
+          { q: "How does the result reach Airtable?", a: "We send neither a webhook nor a reply to a request. Our server fills in the record itself, as the upload proceeds and once it is complete. The recipient's side works with the table: reads the status and the file path, collects the archive and sets the “collected” flag. No separate interface is required for this." },
+          { q: "Is there a list of error codes?", a: "The codes belong to the scene checks and are visible to the modeller in 3ds Max — they describe faults in the model, not in the exchange. There are no integration error codes, because there is no interface that would return them: the outcome reaches the record as a status, and the reason for a refusal as text in a separate field." },
+          { q: "Is there test access, and are there test models?", a: "Not yet. A test environment will appear together with storage — until that is connected there is nothing to hand out. A set of test models with known expected results will be assembled at the same time." }
+        ]},
+        { t: "table", head: ["Status", "What it means", "Who sets it"], rows: [
+          ["<code>uploading</code>", "The upload has begun. The record is created up front so that an unfinished archive is visible", "our server"],
+          ["<code>uploaded</code>", "The archive has been accepted by storage and its integrity confirmed", "our server"],
+          ["<code>failed</code>", "The upload did not succeed; the reason is in a separate field", "our server"],
+          ["<code>approved</code> / <code>rejected</code>", "The decision following the visual inspection of the model", "the verifier"],
+          ["<code>collected</code>", "The archive has been taken into permanent storage. On this flag we delete our own copy", "the recipient's program"]
+        ]},
+        { t: "h3", v: "What stands in the way" },
+        { t: "list", v: [
+          "<b>It has not been settled whose side storage is created on.</b> That determines whether we need keys to it and whether a separate way of granting the recipient access is required.",
+          "<b>There is no access to the modellers' table.</b> The list of roles is a stub for now. Once access exists, replacing it comes down to a single file.",
+          "<b>It has not been confirmed how the recipient marks a model as collected.</b> That determines when we delete our copy of the file."
+        ]}
+      ]
+    }
+  ],
+  footer: ["Packshoter · internal document, 18 September 2026"]
+};
+
+/* ─────────────────────────── FRANÇAIS ─────────────────────────── */
+CONTENT.fr = {
+  sub: "Un plugin 3ds Max pour contrôler, normaliser et empaqueter les modèles 3D",
+  statusLabels: { ok:"fait", wip:"en cours", no:"pas encore" },
+  shotLabel: "capture à venir",
+  hero: {
+    eyebrow: "Description technique",
+    h1: "",
+    lede: "Packshoter est un plugin pour 3ds Max. Il construit la scène de prise de vue autour du modèle terminé, place les caméras et les lumières, cadre le modèle, cuit l'AO et rend l'aperçu. Il soumet ensuite la scène à quarante-cinq étapes de contrôle, corrige trois cents erreurs courantes d'un seul clic et assemble l'archive ZIP finale, qui contient :<br><span class=\"lede-list\">— la scène 3ds Max et ses textures<br>— l'aperçu du modèle en 1000×750<br>— les exports : GLB, FBX, OBJ</span><br><br>Packshoter est complété par ModelChecker, qui permet d'examiner le modèle à l'œil dans un navigateur : d'abord par le modeleur, puis, une fois le modèle livré, par le vérificateur.",
+    stats: [
+      { n: "45", l: "étapes de contrôle", h: "des noms et dossiers jusqu'aux UV et aux matériaux" },
+      { n: "~280", l: "types d'erreurs", h: "chacun avec son propre code" },
+      { n: "313", l: "corrections automatiques", h: "un clic sur FIX, aucune retouche manuelle" },
+      { n: "12", l: "modes de contrôle visuel", h: "dans ModelChecker, côté navigateur" }
+    ]
+  },
+  toc: "Sommaire",
+  sections: [
+    /* 1 ─────────────────────────────────────────────────────────── */
+    {
+      id: "tools", num: "01", title: "Deux outils",
+      sub: "Packshoter travaille dans 3ds Max chez le modeleur ; ModelChecker, dans le navigateur, sert au modeleur comme au vérificateur.",
+      blocks: [
+        { t: "cards", v: [
+          { tag: "3ds Max · poste du modeleur", h: "Packshoter", p: "Construction de la scène, caméras, lumières, cuisson de l'AO, rendu de l'aperçu, contrôle de la scène, corrections automatiques, empaquetage. C'est là que le modèle est construit et mis aux normes." },
+          { tag: "Navigateur · poste du vérificateur", h: "ModelChecker", p: "Contrôle visuel du GLB final en douze modes : cartes de matériaux une à une, forme sans textures, normales, faces arrière, dépliage UV. Il ne modifie rien — il montre." }
+        ]},
+        { t: "shots", v: [
+          { src: "img/packshoter-main.png", cap: "Packshoter dans 3ds Max : jeux de caméras et d'éclairage, réglage du sol, placement du pivot, liste des erreurs avec ses boutons FIX, constructeur de matériaux et Detacher" },
+          { src: "img/modelchecker.png", cap: "ModelChecker : arbre de scène avec le nombre de polygones par objet, dimensions du modèle en millimètres et douze modes de contrôle visuel" },
+          { src: "img/packshoter-cameras.png", cap: "Ce que produisent les jeux de caméras : neuf vues d'un même modèle. L'en-tête porte les dimensions, la version de 3ds Max, celle du gabarit de scène, celle de Packshoter et le point de pivot" },
+          { src: "img/modelchecker-uv.png", cap: "Contrôle du dépliage dans ModelChecker : îlots UV, compteurs de faces inversées et superposées, et ce qui sort de 0–1" }
+        ]},
+        { t: "note", v: "<b>Répartition des contrôles.</b> Packshoter contrôle les paramètres de la scène — noms, structure, matériaux, textures. La conformité du modèle à sa référence (proportions, couleur, transparence, présence de marques commerciales étrangères) ne se vérifie pas par le code ; elle s'évalue à l'œil, dans ModelChecker." }
+      ]
+    },
+    /* 3 ─────────────────────────────────────────────────────────── */
+    {
+      id: "process", num: "02", title: "Le processus de bout en bout",
+      sub: "Du modèle terminé jusqu'à son arrivée chez le destinataire. Le contrôle n'est pas la première étape, mais l'avant-dernière.",
+      blocks: [
+        { t: "flow", v: [
+          { b: "Modeleur", s: "modèle terminé" },
+          { b: "Packshoter", s: "scène, contrôle, empaquetage" },
+          { b: "Stockage", s: "archive, GLB, aperçu" },
+          { b: "Table", s: "fiche et statut" },
+          { b: "Vérificateur", s: "contrôle dans ModelChecker" },
+          { b: "Destinataire", s: "récupère l'archive" }
+        ], back: "Le vérificateur a relevé des erreurs : le modeleur en reçoit la liste, corrige le modèle et relance l'empaquetage. La nouvelle version vient se placer à côté de la précédente, sans l'écraser." },
+        { t: "steps", v: [
+          { h: "Le modeleur achève son modèle et lance Packshoter", p: "Packshoter construit la scène autour du modèle : la hiérarchie du gabarit, l'environnement et les objets de service." },
+          { h: "Choix d'un jeu de caméras et d'un schéma d'éclairage", p: "Quinze dispositions de caméras selon le type de produit, onze dispositifs d'éclairage de studio et HDRI. Le modèle est cadré automatiquement dans les caméras retenues." },
+          { h: "Cuisson de l'AO", p: "Les cartes d'occlusion sont cuites sur place. Le modeleur voit du même coup le rendu du modèle avec elles — c'est le premier contrôle visuel." },
+          { h: "Rendu de l'aperçu", p: "L'image destinée à la fiche du modèle est prise dans la même scène, avec les mêmes caméras et le même éclairage." },
+          { h: "Le contrôle démarre", p: "Quarante-cinq étapes à la suite. Tout ce qui est relevé est réuni en une seule liste, avec l'objet et le code." },
+          { h: "Les erreurs et les constats s'affichent en liste", p: "Les erreurs corrigibles automatiquement portent un bouton FIX. Un clic corrige l'erreur sur place et retire sa ligne de la liste." },
+          { h: "Empaquetage de la scène", p: "Si la liste est vide, l'archive ZIP est empaquetée. Le commentaire de l'archive consigne la version de Packshoter qui l'a produite, la date et l'heure de création, le gabarit de scène et la version de 3ds Max (le nombre de polygones et l'adresse de l'auteur restent à ajouter)<br><span class=\"warn-line\">Tant que la liste contient des erreurs, l'archive ZIP ne peut pas être produite</span>" },
+          { h: "L'ensemble part vers le stockage", p: "L'envoi se fait par parties, en arrière-plan, dans un processus distinct — 3ds Max peut être fermé, le transfert se poursuit. Trois fichiers sont envoyés : l'archive ZIP, l'aperçu et le GLB. Tous trois figurent déjà dans l'archive, mais ils sont transmis séparément afin que l'aperçu soit visible dans Airtable sans rien décompresser et que le vérificateur dispose d'un lien direct<br><span class=\"warn-line\">(pas encore en place)</span>" },
+          { h: "La fiche du modèle est mise à jour", p: "Le chemin du fichier, la somme de contrôle et le statut sont inscrits dans la table — depuis le serveur, et non depuis la machine du modeleur <br><span class=\"warn-line\">(pas encore en place)</span>" },
+          { h: "Le vérificateur examine le modèle", p: "Il ouvre le GLB dans ModelChecker et tranche : accepter, ou renvoyer pour correction." }
+        ]},
+        { t: "h3", v: "Si quelque chose tourne mal" },
+        { t: "list", v: [
+          "<b>Une erreur dans la scène.</b> L'empaquetage ne démarre pas. La liste reste ouverte jusqu'à ce que les erreurs soient levées, à la main ou par bouton.",
+          "<b>Coupure du réseau pendant l'envoi.</b> Chaque partie est renvoyée jusqu'à quatre fois, avec une pause croissante entre les tentatives. Une brève coupure passe inaperçue.",
+          "<b>Envoi entièrement interrompu.</b> L'archive reste sur le disque. Un nouvel envoi reprend là où il s'était arrêté, et non de zéro.",
+          "<b>Fichier endommagé en chemin.</b> La somme de contrôle est calculée avant l'envoi puis comparée à celle que renvoie le stockage. Si elles diffèrent, le modèle n'est pas accepté, et le rapport l'indique.",
+          "<b>Modèle livré à nouveau.</b> La nouvelle version n'écrase pas la précédente : elle se place à côté. L'historique des corrections est conservé."
+        ]}
+      ]
+    },
+    /* 4 ─────────────────────────────────────────────────────────── */
+    {
+      id: "packshoter", num: "03", title: "Packshoter : description",
+      sub: "Ce qu'il reçoit, ce qu'il contrôle, ce qu'il corrige lui-même et ce qu'il produit.",
+      blocks: [
+        { t: "h3", v: "Comment Packshoter est construit" },
+        { t: "p", v: "Trois couches. Un chargeur MaxScript léger fournit les entrées de menu. L'interface et les enchaînements sont en C#. Toute la logique de contrôle et de correction est en C++. Le gros du travail vit en C++ précisément pour la vitesse : contrôler une scène de plusieurs centaines d'objets doit prendre des secondes, non des minutes." },
+        { t: "p", v: "Packshoter s'exécute entièrement sur la machine du modeleur, à l'intérieur du processus 3ds Max. Aucun composant serveur n'est nécessaire aux contrôles — le réseau n'intervient qu'au moment de l'envoi." },
+
+        { t: "h3", v: "Ce qu'il reçoit" },
+        { t: "p", v: "Une scène 3ds Max à l'arborescence imposée : un dossier de base contenant <code>scene</code> avec le fichier de scène et <code>textures</code> avec les cartes et le HDR. Les noms de dossiers, de fichiers et d'objets suivent la nomenclature — elle aussi est contrôlée." },
+
+        { t: "h3", v: "Ce qu'il contrôle" },
+        { t: "p", v: "Les contrôles se répartissent en dix-huit groupes. Voici ce que couvre chacun d'eux, avec des exemples de constats réels." },
+        { t: "table", head: ["Groupe", "Ce qui est contrôlé précisément"], rows: [
+          ["Nom de scène et dossiers", "Longueur du nom, caractères cyrilliques et interdits, structure du nom, présence de <code>scene</code> / <code>textures</code> / <code>preview</code>, fichiers et dossiers étrangers"],
+          ["Structure du gabarit", "Le helper de base de la scène, son unicité, la hiérarchie en dessous, la conformité au gabarit PACKSHOOTER-TEMPLATE"],
+          ["Types d'objets", "Seuls les types autorisés ont leur place dans la scène ; tout le reste est une erreur"],
+          ["Noms et suffixes", "Unicité, suffixes numériques sans trou, longueur des noms, ASCII uniquement, correspondance entre les noms de matériau et d'objet — identiques dans l'ancienne nomenclature, liés autrement dans le schéma SC"],
+          ["Géométrie", "Échelle, modificateurs et animation, XRef, géométrie vide, transformations des helpers, groupes (interdits)"],
+          ["Pivots", "Pivot du modèle par rapport à la boîte englobante, pivots des helpers et des caméras, pivots de la géométrie bulb"],
+          ["Nombre de polygones", "Le compteur : cinq millions et au-delà constituent une erreur"],
+          ["UV", "Trois jeux de contrôles distincts — géométrie nouvelle, géométrie ancienne et schéma SC ; étirements et échelle de tuile"],
+          ["Groupes de lissage", "Présents et corrects sur toute la géométrie"],
+          ["Matériaux", "Validation de base, affectation aux objets, présence de l'AO, noms des matériaux"],
+          ["Paramètres de matériau", "Base Weight, Reflection Color, IOR, anisotropie, diffusion, revêtement, transparence, Bump Amount"],
+          ["Emplacements de texture", "Gamma, flou, décalage de flou, coordonnées U/V — séparément pour chacun des dix emplacements"],
+          ["Normal Bump", "Le multiplicateur, la méthode Tangent, l'inversion des canaux rouge et vert"],
+          ["Chemins des textures", "Toutes les cartes se trouvent dans <code>scene/textures</code> ; aucun chemin ne pointe au-dehors"],
+          ["Fichiers de texture", "Un <code>_AO.png</code> et un <code>_H.png</code> pour chaque objet, le HDR dans le dossier des textures, fichiers étrangers"],
+          ["Aperçu", "Exactement un PNG, 1000×750, dont le nom correspond à celui de la scène"],
+          ["Caméras et lumières", "Le nombre de caméras et de helpers, la géométrie bulb et ses matériaux"],
+          ["Réglages de la scène", "Moteur de rendu, unités, gamma, liste Batch Render vide, Environment and Effects, verrous de transformation"]
+        ]},
+
+        { t: "h3", v: "Ce qu'il corrige lui-même" },
+        { t: "p", v: "Trois cent treize corrections sont rattachées au bouton <span class=\"mark\">FIX</span> placé en regard de la ligne d'erreur. Les corrections sont plus nombreuses que les types d'erreurs, car un même constat existe séparément pour chaque emplacement de texture et se corrige différemment dans chacun d'eux." },
+        { t: "note", v: "<b>Ce à quoi Packshoter ne touche pas.</b> Tout ce qui appelle une décision humaine : un nombre de polygones excessif, un dépliage étiré, des intersections de géométrie, une forme tout simplement fausse. Ces constats sont affichés mais sans bouton de correction — ils relèvent du modeleur." },
+
+        { t: "h3", v: "Ce qu'il produit" },
+        { t: "list", v: [
+          "<b>L'archive de la scène</b> — un ZIP contenant la scène, ses textures, l'aperçu et les exports, prêt à être transmis.",
+          "<b>Le GLB</b> — le modèle destiné à la visualisation en navigateur, réexporté à chaque empaquetage.",
+          "<b>L'aperçu</b> — un PNG 1000×750 pour la fiche du modèle."
+        ]},
+
+        { t: "h3", v: "Les outils intégrés" },
+        { t: "p", v: "Au-delà des contrôles, Packshoter embarque un ensemble d'outils dont le modeleur se sert tout au long du travail sur une scène." },
+        { t: "table", head: ["Outil", "Ce qu'il fait"], rows: [
+          ["Jeux de caméras", "Quinze dispositions prêtes à l'emploi selon le type de produit : canapé, bibliothèque, fauteuil, tapis, miroir, lampadaire et autres"],
+          ["Schémas d'éclairage", "Onze dispositifs de studio — Butterfly, Rembrandt, Hollywood, Flat, Split et les autres — plus HDRI et rotations"],
+          ["Pivoter", "Place le pivot d'un objet au point voulu de sa boîte englobante"],
+          ["Bake AO", "Cuit les cartes d'occlusion ambiante du modèle"],
+          ["Nullifier", "Remet la position et la rotation à zéro"],
+          ["Detacher", "Décompose un modèle en ses parties selon des règles définies"],
+          ["Material Maker", "Construit les matériaux conformément à la norme"],
+          ["Renommage selon la nomenclature", "Met les noms de scène et d'objets au schéma retenu"],
+          ["Rendu et visualisation", "AO, Checker, Shading, rendu d'image et de tour complet, réglage du sol"]
+        ]},
+        { t: "note", v: "<b>Accessoirisation.</b> Un processus à part entière : le modèle est assemblé à partir d'accessoires interchangeables, dont découlent ensuite des variantes d'un même produit — coussins, étagères ou quincaillerie différents. Les contrôles correspondants existent dans Packshoter et fonctionnent. <b>Pour Physicl, ce processus n'est pas d'actualité</b> — il subsiste d'un client précédent et ne joue aucun rôle dans la chaîne actuelle." }
+      ]
+    },
+    /* 5 ─────────────────────────────────────────────────────────── */
+    {
+      id: "checker", num: "04", title: "ModelChecker : description",
+      sub: "Contrôle visuel du modèle terminé dans un navigateur, sans 3ds Max et sans décompresser l'archive.",
+      blocks: [
+        { t: "p", v: "ModelChecker ouvre un GLB directement dans le navigateur. Le vérificateur n'a besoin ni de 3ds Max, ni d'une licence, ni d'une archive décompressée — un lien suffit." },
+        { t: "h3", v: "Ce qu'il reçoit" },
+        { t: "p", v: "Un GLB, par lien ou par glisser-déposer dans la fenêtre. Un HDR personnel peut s'y ajouter, pour regarder le modèle sous l'éclairage voulu. <b>Un fichier déposé n'est envoyé nulle part</b> — le navigateur le lit localement et il n'atteint jamais le serveur." },
+        { t: "h3", v: "Douze modes de contrôle visuel" },
+        { t: "table", head: ["Mode", "Ce qu'il montre"], rows: [
+          ["Shaded", "Le modèle tel qu'il est, avec tous ses matériaux"],
+          ["Base color", "La carte de couleur de base seule, sans éclairage"],
+          ["Roughness", "Le canal de rugosité"],
+          ["Metalness", "Le canal de métallicité"],
+          ["Normal", "La carte de normales en tant que texture"],
+          ["Emissive", "L'émission"],
+          ["AO map", "La carte d'occlusion cuite"],
+          ["Clay", "Un matériau sombre et sans textures — la forme se lit aux reflets"],
+          ["Normal check", "Le même matériau avec la carte de normales : ses défauts deviennent visibles"],
+          ["UV checker", "Une texture à damier : étirements et échelle de tuile deviennent visibles"],
+          ["Backfaces", "Les faces arrière en rouge"],
+          ["Normals", "Les normales de la géométrie rendues en couleur"]
+        ]},
+        { t: "h3", v: "Fonctions complémentaires" },
+        { t: "list", v: [
+          "<b>Arbre de scène</b> — la structure du modèle, avec sélection et isolation.",
+          "<b>Dimensions</b> — la taille du modèle sur chaque axe.",
+          "<b>Pivot</b> — l'emplacement du point d'ancrage.",
+          "<b>Filaire</b> — le maillage par-dessus le modèle.",
+          "<b>Dépliage UV</b> — l'unwrap dans un panneau à part.",
+          "<b>Environnement personnel</b> — déposez un HDR et regardez le modèle sous la lumière voulue."
+        ]},
+        { t: "note", v: "<b>ModelChecker ne corrige rien.</b> C'est une fenêtre d'observation, non un éditeur : il présente le modèle de sorte que ses défauts sautent aux yeux, mais la décision revient à une personne. Les corrections se font dans 3ds Max, et le modèle est livré à nouveau." },
+        { t: "h3", v: "Où il est hébergé" },
+        { t: "p", v: "Une application web sur Cloudflare Workers, avec un rendu three.js. <br> La page est protégée par une connexion Google : elle n'admet que les salariés du domaine de travail, plus une liste nominative d'exceptions." }
+      ]
+    },
+    /* 6 ─────────────────────────────────────────────────────────── */
+    {
+      id: "arch", num: "05", title: "Architecture",
+      sub: "Qui s'exécute où, qui détient quoi, et qui prend les décisions.",
+      blocks: [
+        { t: "arch", v: {
+          lanes: [
+            { who: "Machine du modeleur", boxes: [
+              { b: "3ds Max + Packshoter", s: "Contrôles, corrections, empaquetage. Ne détient aucun secret", key: true },
+              { b: "Processus d'envoi distinct", s: "Envoie l'archive par parties ; Max peut être fermé" }
+            ]},
+            { who: "Serveur", boxes: [
+              { b: "Worker (API)", s: "Vérifie qui appelle et quel est son rôle. Toutes les clés vivent ici", key: true }
+            ]},
+            { who: "Stockage", boxes: [
+              { b: "Stockage intermédiaire", s: "Archive, GLB et aperçu, le temps de la validation" }
+            ]},
+            { who: "Suivi", boxes: [
+              { b: "Table des modèles", s: "Fiche, chemin du fichier, statut. Écrite par le worker" }
+            ]},
+            { who: "Vérificateur", boxes: [
+              { b: "ModelChecker dans le navigateur", s: "Contrôle visuel du GLB, décision d'accepter ou de renvoyer" }
+            ]},
+            { who: "Destinataire", boxes: [
+              { b: "Stockage définitif", s: "Les modèles acceptés sont récupérés et conservés par le destinataire", cold: true }
+            ]}
+          ]
+        }},
+        { t: "h3", v: "Comment lire ce schéma" },
+        { t: "list", v: [
+          "<b>Le fichier ne transite pas par le serveur.</b> L'archive va directement de la machine du modeleur au stockage. Le serveur ne fait qu'accorder l'autorisation d'écrire — c'est pourquoi les grandes scènes ne butent jamais sur une limite de taille de requête.",
+          "<b>Les décisions appartiennent au serveur.</b> La destination d'un fichier découle du rôle de la personne, et ce rôle provient de la table. Packshoter n'a pas voix au chapitre.",
+          "<b>C'est le serveur qui écrit les fiches.</b> La clé d'accès à la base ne quitte pas le serveur et n'atteint jamais la machine d'un modeleur.",
+          "<b>Notre stockage est temporaire.</b> Il sert le temps de la validation. Les modèles acceptés sont récupérés par le destinataire et conservés chez lui — et c'est là que les artistes les prennent ensuite."
+        ]}
+      ]
+    },
+    /* 7 ─────────────────────────────────────────────────────────── */
+    {
+      id: "integration", num: "06", title: "Intégration",
+      sub: "Comment fonctionne l'échange pour la partie qui récupérera les modèles.",
+      blocks: [
+        { t: "p", v: "L'échange repose sur des requêtes adressées au worker. La partie externe l'appelle, confirme son identité et reçoit l'autorisation de télécharger un fichier précis — valable un temps limité et en lecture seule. Aucune clé permanente du stockage n'est distribuée." },
+        { t: "list", v: [
+          "<b>Ce que contient la fiche du modèle.</b> Le chemin du fichier, la somme de contrôle et le statut. Le chemin sert à récupérer le fichier ; la somme de contrôle confirme qu'il est arrivé intact.",
+          "<b>L'autorisation porte sur un seul fichier.</b> Elle ne donne accès ni aux autres modèles ni à l'écriture, et cesse d'agir au bout de quelques minutes.",
+          "<b>Un transfert déjà engagé n'est pas interrompu.</b> L'expiration ne limite que le démarrage d'un téléchargement ; celui qui est en cours va jusqu'au bout.",
+          "<b>La reprise est prise en charge.</b> Un téléchargement interrompu repart du point où il s'est arrêté."
+        ]},
+        { t: "note red", v: "<b>L'intégration avec Airtable n'existe pas encore.</b> Le schéma d'échange n'est ni arrêté ni décrit, les champs de la table ne sont pas définis, et la liaison elle-même n'est pas construite. C'est le prochain chantier, et il dépend de la manière dont le stockage sera organisé — voir la section sur l'état actuel." }
+      ]
+    },
+    /* 8 ─────────────────────────────────────────────────────────── */
+    {
+      id: "security", num: "07", title: "Accès et sécurité",
+      sub: "Réponses aux questions posées lors de la préparation de ce transfert.",
+      blocks: [
+        { t: "qa", v: [
+          { q: "Comment l'utilisateur se connecte-t-il ?", a: "Par Google, selon le parcours standard des applications de bureau. Le mot de passe est saisi sur la page de Google ; l'application ne le voit jamais. La session survit aux redémarrages de 3ds Max et se renouvelle sans nouvelle connexion." },
+          { q: "Comment le serveur s'assure-t-il qu'il s'agit bien de cette personne ?", a: "L'identité présentée par Packshoter est vérifiée par sa signature, à l'aide des clés publiques de Google. Sans ce contrôle, n'importe qui pourrait fabriquer une identité portant l'adresse d'autrui." },
+          { q: "Quels rôles existent, et d'où viennent-ils ?", a: "Le rôle est conservé dans la table des modeleurs et lu par le serveur à chaque requête. Il détermine si l'envoi est autorisé et dans quel dossier le fichier atterrit. L'application elle-même ne contient aucun rôle." },
+          { q: "Où sont conservées les clés ?", a: "Toutes du côté serveur : la clé du stockage, le jeton de la table, le secret de l'application Google. Aucune n'est présente dans le programme installé chez un modeleur." },
+          { q: "De quoi dispose Packshoter ?", a: "L'identifiant public de l'application Google, l'adresse du serveur, et l'identité de l'utilisateur, chiffrée par Windows sous son propre compte." },
+          { q: "Comment l'autorisation d'écriture est-elle délivrée, et pour combien de temps ?", a: "Le serveur signe un lien portant sur un chemin précis, en écriture seule, valable quinze minutes. Un lien intercepté ne permet ni de lire les données d'autrui, ni d'écrire ailleurs, ni de resservir le lendemain." },
+          { q: "Qui détermine la destination du fichier ?", a: "Le serveur, et lui seul. Il lit le rôle et compose le chemin lui-même." },
+          { q: "Le programme peut-il choisir une autre destination ?", a: "Non. Packshoter ne transmet aucun chemin et n'a aucune influence dessus — il n'indique que la référence du modèle." },
+          { q: "Que se passe-t-il si le programme est démonté ou modifié ?", a: "Il ne contient aucune clé : il n'y a rien à y voler. Une copie modifiée n'obtient aucun droit supplémentaire : toutes les décisions appartiennent au serveur, qui vérifie l'identité et le rôle à chaque appel." },
+          { q: "Comment révoquer un accès ?", a: "En décochant la case d'activité dans la table. Le rôle étant vérifié à chaque requête, l'accès cesse aussitôt, et non à l'expiration d'une session." }
+        ]}
+      ]
+    },
+    /* 9 ─────────────────────────────────────────────────────────── */
+    {
+      id: "status", num: "08", title: "État actuel",
+      sub: "Ce qui fonctionne, ce qui est en cours, et ce qui empêche d'aller plus loin.",
+      blocks: [
+        { t: "statustable", head: ["État", "Quoi précisément"], rows: [
+          ["ok", "Contrôle de la scène et corrections automatiques — en fonctionnement"],
+          ["ok", "Empaquetage de l'archive, export GLB et aperçu"],
+          ["ok", "Connexion Google avec vérification de la signature, du rôle et de la destination"],
+          ["ok", "ModelChecker : contrôle du GLB, douze modes, connexion par domaine"],
+          ["ok", "Envoi par parties, reprises en cas de coupure, vérification de la somme de contrôle"],
+          ["ok", "Envoi dans un processus distinct : 3ds Max peut être fermé pendant le transfert"],
+          ["wip", "Stockage intermédiaire — le schéma est arrêté, le raccordement n'est pas fait"],
+          ["wip", "Écriture des fiches dans la table — les champs sont définis, la liaison n'est pas construite"],
+          ["wip", "Reprise de l'envoi après un redémarrage de la machine"],
+          ["no", "Table des modeleurs et des rôles — un bouchon en tient lieu pour l'instant"],
+          ["no", "Remise des modèles acceptés au destinataire et nettoyage de notre côté"]
+        ]},
+        { t: "h3", v: "Précisions pour l'intégration" },
+        { t: "qa", v: [
+          { q: "Quel système déclenche le contrôle de la scène dans Packshoter ?", a: "Aucun. C'est le modeleur qui le déclenche à la main, depuis le menu de 3ds Max, sur sa propre machine. Il n'existe pas de déclenchement automatique et il ne peut pas y en avoir : le contrôle travaille sur une scène ouverte dans 3ds Max. Un appel du type « soumettre ce modèle au contrôle » n'existe pas et n'est pas prévu." },
+          { q: "Et qui lance ModelChecker ?", a: "Le vérificateur, à la main, lorsqu'il prend un modèle en charge. Comment il apprend qu'un modèle attend son examen relève de la partie Airtable : la file d'attente est tenue là-bas, pas chez nous.<br><br><b>Ce que nous proposons.</b> Dès que le statut passe à <code>uploaded</code>, le modèle apparaît dans une vue « à contrôler ». La fiche porte un lien permanent qui ouvre ModelChecker directement sur ce modèle — le vérificateur n'a rien à chercher ni à télécharger. La décision s'inscrit dans la même fiche : <code>approved</code> ou <code>rejected</code>, avec le motif en cas de renvoi." },
+          { q: "Que renvoie ModelChecker ?", a: "Rien. C'est une fenêtre d'observation : elle charge le GLB et le montre selon différents modes. Le résultat du contrôle visuel, c'est la décision du vérificateur, qu'il inscrit dans la fiche du modèle. ModelChecker ne crée ni ne modifie aucun fichier." },
+          { q: "Quels sont les statuts ?", a: "Trois sont posés par notre côté au fil de l'envoi ; les autres par le vérificateur et par le programme du destinataire. La liste complète figure dans le tableau ci-dessous." },
+          { q: "Quels formats et quelles tailles ?", a: "En entrée : une scène 3ds Max, des textures PNG en 4096×4096, un HDR pour l'environnement. En sortie : un seul ZIP contenant la scène et ses textures, un aperçu PNG 1000×750 et les exports GLB, FBX et OBJ ; <br> le GLB et l'aperçu sont en outre déposés comme fichiers distincts. <br> L'archive pèse généralement 100–600 Mo, parfois jusqu'à 2–4 Go. Il n'y a pas de plafond strict : l'envoi se fait par parties." },
+          { q: "Combien de temps les fichiers restent-ils chez nous ?", a: "Jusqu'à la pose de la case « récupéré », plus quelques jours de réserve, au cas où un fichier devrait être récupéré une seconde fois. Nous ne supprimons pas au bout d'un délai : ce serait risquer d'effacer ce que personne n'a encore eu le temps de prendre. La durée exacte de cette réserve n'est pas fixée ; elle dépend de la fréquence à laquelle le destinataire récupère." },
+          { q: "Que se passe-t-il lorsqu'un modèle est livré à nouveau ?", a: "Une nouvelle version apparaît à côté de la précédente ; rien n'est écrasé. Un envoi interrompu reprend là où il s'est arrêté et ne crée pas de seconde copie. Aucune fiche en double n'apparaît non plus : le serveur crée la fiche une seule fois, au démarrage de l'envoi." },
+          { q: "Comment le résultat parvient-il à Airtable ?", a: "Nous n'envoyons ni webhook ni réponse à une requête. Notre serveur remplit lui-même la fiche, au fil de l'envoi puis à son terme. La partie destinataire travaille avec la table : elle lit le statut et le chemin du fichier, récupère l'archive et coche « récupéré ». Aucune interface distincte n'est nécessaire pour cela." },
+          { q: "Existe-t-il une liste de codes d'erreur ?", a: "Les codes relèvent du contrôle de la scène et sont visibles par le modeleur dans 3ds Max — ils décrivent des défauts du modèle, non de l'échange. Il n'existe pas de codes d'erreur d'intégration, faute d'interface qui les renverrait : le résultat parvient à la fiche sous forme de statut, et le motif d'un refus sous forme de texte dans un champ distinct." },
+          { q: "Y a-t-il un accès de test et des modèles de test ?", a: "Pas encore. L'environnement de test apparaîtra en même temps que le stockage — tant qu'il n'est pas raccordé, il n'y a rien à distribuer. Un jeu de modèles de test au résultat connu d'avance sera constitué au même moment." }
+        ]},
+        { t: "table", head: ["Statut", "Ce qu'il signifie", "Qui le pose"], rows: [
+          ["<code>uploading</code>", "L'envoi a commencé. La fiche est créée d'emblée pour qu'une archive incomplète reste visible", "notre serveur"],
+          ["<code>uploaded</code>", "L'archive a été acceptée par le stockage et son intégrité confirmée", "notre serveur"],
+          ["<code>failed</code>", "L'envoi a échoué ; le motif figure dans un champ distinct", "notre serveur"],
+          ["<code>approved</code> / <code>rejected</code>", "La décision prise à l'issue du contrôle visuel du modèle", "le vérificateur"],
+          ["<code>collected</code>", "L'archive a été reprise dans le stockage définitif. C'est sur cette case que nous supprimons notre copie", "le programme du destinataire"]
+        ]},
+        { t: "h3", v: "Ce qui bloque" },
+        { t: "list", v: [
+          "<b>Le côté sur lequel le stockage sera créé n'est pas tranché.</b> Cela détermine si nous avons besoin de clés et s'il faut un mécanisme distinct pour donner l'accès au destinataire.",
+          "<b>Nous n'avons pas accès à la table des modeleurs.</b> La liste des rôles est pour l'instant un bouchon. Dès que l'accès existera, son remplacement tiendra dans un seul fichier.",
+          "<b>La façon dont le destinataire signale qu'il a récupéré un modèle n'est pas confirmée.</b> Cela détermine à quel moment nous supprimons notre copie du fichier."
+        ]}
+      ]
+    }
+  ],
+  footer: ["Packshoter · document interne du 18 septembre 2026"]
+};
+
+/* ═══════════════════════ РЕНДЕР ═══════════════════════ */
+
+const esc = s => String(s);
+
+function block(b){
+  switch(b.t){
+    case "p":    return `<p class="wide">${esc(b.v)}</p>`;
+    case "h3":   return `<h3 class="sub-h">${esc(b.v)}</h3>`;
+    case "note": return `<div class="note">${esc(b.v)}</div>`;
+    case "note blue": return `<div class="note blue">${esc(b.v)}</div>`;
+    case "note red":  return `<div class="note red">${esc(b.v)}</div>`;
+    case "list":
+      return `<ul class="list">${b.v.map(i=>`<li>${esc(i)}</li>`).join("")}</ul>`;
+    case "cards":
+      return `<div class="cards">${b.v.map(c=>
+        `<div class="card"><span class="tag">${esc(c.tag)}</span><h3>${esc(c.h)}</h3><p>${esc(c.p)}</p></div>`).join("")}</div>`;
+    case "steps":
+      return `<div class="steps">${b.v.map((s,i)=>
+        `<div class="step"><div class="n">${i+1}</div><div><h4>${esc(s.h)}</h4><p>${esc(s.p)}</p></div></div>`).join("")}</div>`;
+    case "table":
+      return `<div class="tablewrap"><table><thead><tr>${b.head.map(h=>`<th>${esc(h)}</th>`).join("")}</tr></thead>`+
+        `<tbody>${b.rows.map(r=>`<tr>${r.map(c=>`<td>${esc(c)}</td>`).join("")}</tr>`).join("")}</tbody></table></div>`;
+    case "statustable":
+      return `<div class="tablewrap"><table><thead><tr>${b.head.map(h=>`<th>${esc(h)}</th>`).join("")}</tr></thead>`+
+        `<tbody>${b.rows.map(r=>`<tr><td><span class="pill ${r[0]}">${STATUS_LABEL[r[0]]}</span></td><td>${esc(r[1])}</td></tr>`).join("")}</tbody></table></div>`;
+    case "qa":
+      return `<div class="qa">${b.v.map(x=>`<div><h4>${esc(x.q)}</h4><p>${esc(x.a)}</p></div>`).join("")}</div>`;
+    case "shots":
+      return `<div class="shots">${b.v.map(f=>
+        `<figure><div class="slot" data-src="${f.src}">${SHOT_LABEL}</div><figcaption>${esc(f.cap)}</figcaption></figure>`).join("")}</div>`;
+    case "flow":
+      return `<div class="flow">${b.v.map(s=>
+        `<span class="fl"><b>${esc(s.b)}</b><span>${esc(s.s)}</span></span>`).join("")}</div>`
+        + (b.back ? `<div class="flowback"><span class="hook" aria-hidden="true">↩</span><span>${esc(b.back)}</span></div>` : "");
+    case "arch":
+      return `<div class="arch">${b.v.lanes.map((l,i)=>
+        `<div class="lane"><div class="who">${esc(l.who)}</div><div class="boxes">${
+          l.boxes.map(x=>`<div class="box${x.key?" key":""}${x.cold?" cold":""}"><b>${esc(x.b)}</b><span>${esc(x.s)}</span></div>`).join("")
+        }</div></div>` + (i < b.v.lanes.length-1 ? `<div class="flowline"></div>` : "")).join("")}</div>`;
+    default: return "";
+  }
+}
+
+let STATUS_LABEL = {}, SHOT_LABEL = "";
+
+function render(lang){
+  const C = CONTENT[lang];
+  // Запасные подписи — на английском: он же язык по умолчанию.
+  STATUS_LABEL = C.statusLabels || { ok:"done", wip:"under way", no:"not yet" };
+  SHOT_LABEL   = C.shotLabel || "screenshot to follow";
+
+  document.documentElement.lang = lang;
+  document.getElementById("brandsub").textContent = C.sub;
+  document.title = "Packshoter";
+
+  const toc = C.sections.map(s=>`<a href="#${s.id}"><b>${s.num}</b>${esc(s.title)}</a>`).join("");
+
+  document.getElementById("app").innerHTML = `
+    <div class="hero">
+      <div class="eyebrow">${esc(C.hero.eyebrow)}</div>
+      <h1>${esc(C.hero.h1)}</h1>
+      <p class="lede">${esc(C.hero.lede)}</p>
+      <div class="stats">${C.hero.stats.map(s=>
+        `<div class="stat"><b>${esc(s.n)}</b><span>${esc(s.l)}</span><span>${esc(s.h)}</span></div>`).join("")}</div>
+    </div>
+    <nav class="tocs" aria-label="${esc(C.toc)}">${toc}</nav>
+    ${C.sections.map(s=>`
+      <section id="${s.id}">
+        <div class="sec-head">
+          <div class="sec-num">${esc(s.num)}</div>
+          <h2>${esc(s.title)}</h2>
+          <p class="sub">${esc(s.sub)}</p>
+        </div>
+        <div class="body">${s.blocks.map(block).join("")}</div>
+      </section>`).join("")}
+    <footer>${C.footer.map((f,i)=>`<div${i?' class="mono"':''}>${esc(f)}</div>`).join("")}</footer>
+  `;
+
+  // Скриншоты: если файл существует — показываем его вместо заглушки.
+  document.querySelectorAll(".slot[data-src]").forEach(slot=>{
+    const src = slot.getAttribute("data-src");
+    const img = new Image();
+    img.onload = ()=>{ slot.replaceWith(img); };
+    img.alt = slot.parentElement.querySelector("figcaption").textContent;
+    img.src = src;
+  });
+
+  document.querySelectorAll("#langs button").forEach(b=>
+    b.setAttribute("aria-pressed", String(b.dataset.l === lang)));
+  try{ localStorage.setItem("pshtr-lang", lang); }catch(e){}
+}
+
+/* ── Просмотр скриншота во весь размер ───────────────────────────── */
+const LB = document.getElementById("lightbox");
+const LBIMG = document.getElementById("lbimg");
+const LBCAP = document.getElementById("lbcap");
+
+function openShot(img){
+  LBIMG.src = img.currentSrc || img.src;
+  LBIMG.alt = img.alt || "";
+  LBCAP.textContent = img.alt || "";
+  LB.setAttribute("data-open","1");
+  document.getElementById("lbclose").focus();
+}
+function closeShot(){
+  LB.removeAttribute("data-open");
+  LBIMG.removeAttribute("src");          // чтобы большая картинка не висела в памяти
+}
+
+document.getElementById("app").addEventListener("click", e=>{
+  const img = e.target.closest("figure img");
+  if(img) openShot(img);
+});
+LB.addEventListener("click", closeShot);  // клик в любом месте закрывает
+document.addEventListener("keydown", e=>{ if(e.key === "Escape") closeShot(); });
+
+document.getElementById("langs").addEventListener("click", e=>{
+  const b = e.target.closest("button");
+  if(b && CONTENT[b.dataset.l]) render(b.dataset.l);
+});
+
+/* По умолчанию английский: страница уходит наружу, и англоязычная версия —
+   общий знаменатель. Французскую и русскую подставляем только тем, у кого
+   такой язык в браузере, либо тем, кто выбрал её кнопкой раньше. */
+let start = "en";
+try{
+  const saved = localStorage.getItem("pshtr-lang");
+  if(saved && CONTENT[saved]) start = saved;
+  else if((navigator.language||"").startsWith("fr") && CONTENT.fr) start = "fr";
+  else if((navigator.language||"").startsWith("ru") && CONTENT.ru) start = "ru";
+}catch(e){}
+render(start);
+</script>
+
+<style>
+.sub-h{font-size:19px; margin-top:12px; letter-spacing:-.01em}
+.sub-h:first-child{margin-top:0}
+
+/* Состав архива в шапке: приглушённый синий — второй акцент интерфейса.
+   Отделяет перечисление от текста, не перетягивая на себя внимание. */
+.lede-list{color:var(--blue)}
+
+/* Запрет, а не предупреждение: красный из набора темы, читаемый на обоих фонах.
+   Отдельной строкой — иначе тонет в конце абзаца. */
+.warn-line{color:var(--bad); font-weight:500; display:inline-block; margin-top:6px}
+</style>
+</body>
+</html>
