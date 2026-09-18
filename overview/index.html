@@ -589,7 +589,7 @@ CONTENT.en = {
   hero: {
     eyebrow: "Technical description",
     h1: "",
-    lede: "Packshoter is a plugin for 3ds Max. It builds the shooting scene around a finished model, places the cameras and lights, frames the model, bakes AO and renders the preview. It then puts the scene through forty-five stages of checks, clears three hundred common errors at a single click and assembles the finished ZIP archive, which holds:<br><span class=\"lede-list\">— the 3ds Max scene with its textures<br>— the 1000×750 preview<br>— the exports: GLB, FBX, OBJ</span><br><br>Alongside Packshoter comes ModelChecker, which lets the model be examined by eye in a browser: first by the modeller, and once it has been submitted, by the verifier.",
+    lede: "Packshoter is a plugin for 3ds Max. It builds the shooting scene around a finished model, places the cameras and lights, frames the model, bakes AO and renders the preview. It then puts the scene through forty-five stages of checks, clears three hundred common errors at a single click and assembles the finished ZIP archive, which holds:<br><span class=\"lede-list\">— the 3ds Max scene with its textures<br>— the 1000×750 preview<br>— the exports: GLB, FBX, OBJ</span><br><br>Alongside Packshoter comes ModelChecker, which lets the model be examined by eye in a browser: first by the modeller, and once it has been submitted, by 3D Model QC.",
     stats: [
       { n: "45", l: "stages of checks", h: "from names and folders to UVs and materials" },
       { n: "~280", l: "kinds of error", h: "each with a code of its own" },
@@ -602,11 +602,11 @@ CONTENT.en = {
     /* 1 ─────────────────────────────────────────────────────────── */
     {
       id: "tools", num: "01", title: "Two tools",
-      sub: "Packshoter runs in 3ds Max on the modeller's machine; ModelChecker runs in the browser, for the modeller and the verifier alike.",
+      sub: "Packshoter runs in 3ds Max on the modeller's machine; ModelChecker runs in the browser, for the modeller and 3D Model QC alike.",
       blocks: [
         { t: "cards", v: [
           { tag: "3ds Max · the modeller's desk", h: "Packshoter", p: "Scene assembly, cameras, lighting, AO baking, preview rendering, scene checks, automatic fixes, packaging. This is where the model is built and brought up to standard." },
-          { tag: "Browser · the verifier's desk", h: "ModelChecker", p: "Visual inspection of the finished GLB in twelve modes: material maps one at a time, form without textures, normals, back faces, UV layout. It changes nothing — it only shows." }
+          { tag: "Browser · the 3D Model QC's desk", h: "ModelChecker", p: "Visual inspection of the finished GLB in twelve modes: material maps one at a time, form without textures, normals, back faces, UV layout. It changes nothing — it only shows." }
         ]},
         { t: "shots", v: [
           { src: "img/packshoter-main.png", cap: "Packshoter in 3ds Max: camera and light sets, floor setup, pivot placement, the error list with its FIX buttons, the material builder and Detacher" },
@@ -627,9 +627,9 @@ CONTENT.en = {
           { b: "Packshoter", s: "scene, checks, packaging" },
           { b: "Storage", s: "archive, GLB, preview" },
           { b: "Table", s: "record and status" },
-          { b: "Verifier", s: "inspection in ModelChecker" },
+          { b: "3D Model QC", s: "inspection in ModelChecker" },
           { b: "Recipient", s: "collects the archive" }
-        ], back: "The verifier has found errors: the modeller receives the list of them, corrects the model and runs the packaging again. The new version is placed beside the previous one rather than overwriting it." },
+        ], back: "3D Model QC has found errors: the modeller receives the list of them, corrects the model and runs the packaging again. The new version is placed beside the previous one rather than overwriting it." },
         { t: "steps", v: [
           { h: "The modeller finishes the model and starts Packshoter", p: "Packshoter builds the scene around the model: the template hierarchy, the environment and the supporting objects." },
           { h: "Choosing a camera set and a lighting rig", p: "Fifteen camera layouts by product type, eleven studio lighting rigs, and HDRI. The model is framed in the chosen cameras automatically." },
@@ -638,9 +638,9 @@ CONTENT.en = {
           { h: "The checks are run", p: "Forty-five stages, one after another. Everything found is gathered into a single list naming the object and the code." },
           { h: "Errors and findings appear as a list", p: "Errors that can be corrected automatically carry a FIX button. One click corrects the error in place and removes its line from the list." },
           { h: "Packaging the scene", p: "If the list is empty, the ZIP archive is packaged. The archive comment records which version of Packshoter built it, when it was created, the scene template and the 3ds Max version (the polygon count and the author's e-mail address are still to be added)<br><span class=\"warn-line\">While the list still holds errors, the archive cannot be packaged</span>" },
-          { h: "The set goes to storage", p: "The upload runs in parts, in the background, as a separate process — 3ds Max may be closed and the transfer carries on. Three files are uploaded: the ZIP archive, the preview and the GLB. All three are already inside the archive, but they are sent separately so that the preview can be seen in Airtable without unpacking anything and so that the verifier can be given a direct link<br><span class=\"warn-line\">(not built yet)</span>" },
+          { h: "The set goes to storage", p: "The upload runs in parts, in the background, as a separate process — 3ds Max may be closed and the transfer carries on. Three files are uploaded: the ZIP archive, the preview and the GLB. All three are already inside the archive, but they are sent separately so that the preview can be seen in Airtable without unpacking anything and so that 3D Model QC can be given a direct link<br><span class=\"warn-line\">(not built yet)</span>" },
           { h: "The model record is updated", p: "The file path, the checksum and the status are written to the table — from the server side, not from the modeller's machine <br><span class=\"warn-line\">(not built yet)</span>" },
-          { h: "The verifier inspects the model", p: "Opens the GLB in ModelChecker and decides: accept it, or send it back for rework." }
+          { h: "3D Model QC inspects the model", p: "Opens the GLB in ModelChecker and decides: accept it, or send it back for rework." }
         ]},
         { t: "h3", v: "If something goes wrong" },
         { t: "list", v: [
@@ -719,7 +719,7 @@ CONTENT.en = {
       id: "checker", num: "04", title: "ModelChecker: description",
       sub: "Visual inspection of the finished model in a browser, without 3ds Max and without unpacking the archive.",
       blocks: [
-        { t: "p", v: "ModelChecker opens a GLB straight in the browser. The verifier needs neither 3ds Max nor a licence for it nor an unpacked archive — a link is enough." },
+        { t: "p", v: "ModelChecker opens a GLB straight in the browser. 3D Model QC needs neither 3ds Max nor a licence for it nor an unpacked archive — a link is enough." },
         { t: "h3", v: "What it takes in" },
         { t: "p", v: "A GLB, either from a link or dropped into the window. An HDR of your own can be added on top, to view the model under the lighting you need. <b>A dropped file is not sent anywhere</b> — the browser reads it locally and it never reaches the server." },
         { t: "h3", v: "Twelve visual inspection modes" },
@@ -771,7 +771,7 @@ CONTENT.en = {
             { who: "Records", boxes: [
               { b: "Model table", s: "Record, file path, status. Written by the worker" }
             ]},
-            { who: "Verifier", boxes: [
+            { who: "3D Model QC", boxes: [
               { b: "ModelChecker in the browser", s: "Visual inspection of the GLB, the decision to accept or return" }
             ]},
             { who: "Recipient", boxes: [
@@ -843,9 +843,9 @@ CONTENT.en = {
         { t: "h3", v: "Points of clarification for the integration" },
         { t: "qa", v: [
           { q: "Which system starts the scene checks in Packshoter?", a: "None. The modeller starts them by hand, from the 3ds Max menu on their own machine. There is no automatic start and there cannot be one: the checks work on a scene open inside 3ds Max. A call along the lines of “submit this model for checking” does not exist and is not planned." },
-          { q: "And who starts ModelChecker?", a: "The verifier, by hand, when they take a model on. How word reaches them that a model is waiting is a question for the Airtable side: the review queue is kept there, not with us.<br><br><b>What we suggest.</b> As soon as the status becomes <code>uploaded</code>, the model appears in a “to review” view. The record carries a permanent link that opens ModelChecker on that very model — the verifier has nothing to search for and nothing to download. The decision goes into the same record: <code>approved</code> or <code>rejected</code>, with the reason written down when a model is returned." },
-          { q: "What does ModelChecker return?", a: "Nothing. It is a viewing window: it loads the GLB and shows it in various modes. The outcome of the visual inspection is the verifier's decision, which they enter in the model record. ModelChecker neither creates nor alters any file." },
-          { q: "What statuses are there?", a: "Three are set by our side as the upload proceeds; the rest by the verifier and by the recipient's program. The full list is in the table below." },
+          { q: "And who starts ModelChecker?", a: "3D Model QC, by hand, when they take a model on. How word reaches them that a model is waiting is a question for the Airtable side: the review queue is kept there, not with us.<br><br><b>What we suggest.</b> As soon as the status becomes <code>uploaded</code>, the model appears in a “to review” view. The record carries a permanent link that opens ModelChecker on that very model — 3D Model QC has nothing to search for and nothing to download. The decision goes into the same record: <code>approved</code> or <code>rejected</code>, with the reason written down when a model is returned." },
+          { q: "What does ModelChecker return?", a: "Nothing. It is a viewing window: it loads the GLB and shows it in various modes. The outcome of the visual inspection is the decision of 3D Model QC, which they enter in the model record. ModelChecker neither creates nor alters any file." },
+          { q: "What statuses are there?", a: "Three are set by our side as the upload proceeds; the rest by 3D Model QC and by the recipient's program. The full list is in the table below." },
           { q: "What formats and sizes?", a: "Coming in: a 3ds Max scene, PNG textures at 4096×4096, an HDR for the environment. Going out: a single ZIP holding the scene with its textures, a 1000×750 PNG preview and the GLB, FBX and OBJ exports; <br> the GLB and the preview are additionally placed as separate files. <br> The archive usually weighs 100–600 MB, occasionally up to 2–4 GB. There is no hard ceiling: the upload runs in parts." },
           { q: "How long do files stay with us?", a: "Until the “collected” flag is set, plus a few days in reserve, in case a file has to be collected a second time. We do not delete on a timer: that would risk erasing something nobody has managed to collect yet. The exact reserve has not been fixed; it depends on how often the recipient collects." },
           { q: "What happens when a model is submitted again?", a: "A new version appears beside the previous one; nothing is overwritten. An interrupted upload resumes from where it broke off and creates no second copy. Nor does a duplicate record appear: the server creates the record once, when the upload begins." },
@@ -857,7 +857,7 @@ CONTENT.en = {
           ["<code>uploading</code>", "The upload has begun. The record is created up front so that an unfinished archive is visible", "our server"],
           ["<code>uploaded</code>", "The archive has been accepted by storage and its integrity confirmed", "our server"],
           ["<code>failed</code>", "The upload did not succeed; the reason is in a separate field", "our server"],
-          ["<code>approved</code> / <code>rejected</code>", "The decision following the visual inspection of the model", "the verifier"],
+          ["<code>approved</code> / <code>rejected</code>", "The decision following the visual inspection of the model", "3D Model QC"],
           ["<code>collected</code>", "The archive has been taken into permanent storage. On this flag we delete our own copy", "the recipient's program"]
         ]},
         { t: "h3", v: "What stands in the way" },
