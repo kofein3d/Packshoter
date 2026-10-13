@@ -314,7 +314,7 @@ CONTENT.ru = {
       blocks: [
         { t: "cards", v: [
           { tag: "3ds Max · рабочее место моделлера", h: "Packshoter", p: "Сборка сцены, камеры, свет, запекание AO, рендер превью, проверка сцены, автоисправления, упаковка архива. Здесь модель создаётся и приводится к стандарту." },
-          { tag: "Браузер · рабочее место верификатора", h: "ModelChecker", p: "Визуальная проверка готового GLB в двенадцати режимах: карты материалов по отдельности, форма без текстур, нормали, изнанка, развёртка UV. Ничего не меняет — только показывает." }
+          { tag: "Браузер · рабочее место верификатора", h: "ModelChecker", p: "Визуальная проверка готового GLB в двенадцати режимах: карты материалов по отдельности, форма без текстур, нормали, изнанка, развёртка UV, суставы и масса деталей. Ничего не меняет — только показывает." }
         ]},
         { t: "shots", v: [
           { src: "img/packshoter-main.png", cap: "Packshoter в 3ds Max: наборы камер и света, настройка пола, установка пивота, список ошибок с кнопками FIX, сборщик материалов и Detacher" },
@@ -381,10 +381,12 @@ CONTENT.ru = {
           ["Имена и суффиксы", "Уникальность имён, числовые суффиксы без пропусков, длина имён, только ASCII, соответствие имён материала и объекта — по старой номенклатуре они совпадают, по схеме SC связаны иначе"],
           ["Геометрия", "Масштаб, модификаторы и анимация, XRef, пустая геометрия, трансформации хелперов, группы (запрещены)"],
           ["Пивоты", "Пивот модели относительно габаритов, пивоты хелперов и камер, пивоты bulb-геометрии"],
+          ["Суставы (SC)", "Положение и число joint-хелперов в группах; имя сустава: тип, ось, пределы, родитель"],
           ["Полигонаж", "Счётчик полигонов: пять миллионов и выше — ошибка"],
-          ["UV", "Три отдельных набора проверок для новой геометрии, старой и схемы SC; растяжения и масштаб тайла"],
+          ["UV", "Вывернутые и наложенные полигоны, отступы, плотность текселя, выход за 0–1; отдельные наборы для новой геометрии, старой и схемы SC"],
           ["Группы сглаживания", "Наличие и корректность на всей геометрии"],
           ["Материалы", "Базовая валидация, соответствие объектам, наличие AO, имена материалов"],
+          ["Масса (SC)", "Физический материал в имени материала и его наличие в таблице плотностей; замкнутость и ориентация геометрии"],
           ["Параметры материала", "Base Weight, Reflection Color, IOR, анизотропия, рассеивание, покрытие, прозрачность, Bump Amount"],
           ["Слоты текстур", "Гамма, размытие, смещение размытия, координаты U/V — отдельно для каждого из десяти слотов"],
           ["Normal Bump", "Множитель, метод Tangent, переворот каналов R и G"],
@@ -402,7 +404,7 @@ CONTENT.ru = {
         { t: "h3", v: "Что отдаёт на выходе" },
         { t: "list", v: [
           "<b>Архив сцены</b> — ZIP со сценой, текстурами, превью и экспортами, готовый к передаче.",
-          "<b>GLB</b> — модель для просмотра в браузере, экспортируется заново при каждой упаковке.",
+          "<b>GLB</b> — модель для просмотра в браузере, экспортируется заново при каждой упаковке собственным экспортёром Packshoter; в нём записана масса каждой детали.",
           "<b>Превью</b> — PNG 1000×750 для карточки модели."
         ]},
 
@@ -417,7 +419,11 @@ CONTENT.ru = {
           ["Detacher", "Разбор модели на составные части по определенным правилам"],
           ["Material Maker", "Сборка материалов по стандарту"],
           ["Переименование по номенклатуре", "Приведение имён сцены и объектов к принятой схеме"],
-          ["Рендер и просмотр", "AO, Checker, Shading, рендер кадра и оборота, настройка пола"]
+          ["Рендер и просмотр", "AO, Checker, Shading, рендер кадра и оборота, настройка пола"],
+          ["Экспорт GLB", "Собственный экспортёр на C++, сцену не меняет; экспортёр Babylon оставлен запасным"],
+          ["UV Layout", "Развёртка объектов на плоскости с подсветкой брака, без модификатора Unwrap"],
+          ["Joint Tester", "Ползунки суставов SC-модели: поза, движение по цепочке, пересечения деталей"],
+          ["Масса", "Масса деталей SC-модели по объёму и плотности материала, считается при сохранении сцены"]
         ]},
         { t: "note", v: "<b>Аксессуаризация.</b> Отдельный процесс: модель собирается из сменных аксессуаров, из которых потом получаются варианты одного изделия — с разными подушками, полками или фурнитурой. Проверки для него в Packshoter есть и работают. <b>Для Physicl этот процесс неактуален</b> — он остался от прежнего заказчика и в текущем конвейере не используется." }
       ]
@@ -451,7 +457,10 @@ CONTENT.ru = {
           "<b>Габариты</b> — размеры модели в осях.",
           "<b>Пивот</b> — где находится опорная точка.",
           "<b>Каркас</b> — сетка поверх модели.",
-          "<b>Раскладка UV</b> — развёртка отдельной панелью.",
+          "<b>Раскладка UV</b> — развёртка отдельной панелью, с подсветкой брака и плотности текселя.",
+          "<b>Суставы</b> — ползунки суставов SC-модели и подсветка пересечений в позе.",
+          "<b>Масса</b> — общая масса модели и масса каждой детали в дереве.",
+          "<b>Чеклист осмотра</b> — отмечается сам по мере просмотра, в конце сохраняется отчёт.",
           "<b>Своё окружение</b> — можно подставить HDR и смотреть модель в нужном свете."
         ]},
         { t: "note", v: "<b>ModelChecker ничего не исправляет.</b> Это смотровое окно, а не редактор: он показывает модель так, чтобы изъяны стали очевидны, но решение принимает человек. Исправления делаются в 3ds Max, и модель сдаётся заново." },
@@ -543,6 +552,9 @@ CONTENT.ru = {
           ["ok", "ModelChecker: проверка GLB, двенадцать режимов, вход по домену"],
           ["ok", "Отправка файла частями, повторы при обрыве, сверка контрольной суммы"],
           ["ok", "Отправка отдельным процессом: 3ds Max можно закрыть во время загрузки"],
+          ["ok", "Собственный экспорт GLB (Babylon оставлен запасным)"],
+          ["ok", "Масса SC-модели: таблица плотностей на сервере, расчёт при сохранении, запись в сцену и GLB"],
+          ["ok", "Суставы: проверка, Joint Tester в 3ds Max, панель Joints в ModelChecker"],
           ["wip", "Промежуточное хранилище — схема согласована, подключение не сделано"],
           ["wip", "Запись карточек в таблицу — поля определены, связка не построена"],
           ["wip", "Докачка после перезапуска компьютера"],
@@ -578,7 +590,7 @@ CONTENT.ru = {
       ]
     }
   ],
-  footer: ["Packshoter · внутренний документ от    18.09.2026"]
+  footer: ["Packshoter · внутренний документ от    13.10.2026"]
 };
 
 /* ─────────────────────────── ENGLISH ─────────────────────────── */
@@ -606,7 +618,7 @@ CONTENT.en = {
       blocks: [
         { t: "cards", v: [
           { tag: "3ds Max · the modeller's desk", h: "Packshoter", p: "Scene assembly, cameras, lighting, AO baking, preview rendering, scene checks, automatic fixes, packaging. This is where the model is built and brought up to standard." },
-          { tag: "Browser · the 3D Model QC's desk", h: "ModelChecker", p: "Visual inspection of the finished GLB in twelve modes: material maps one at a time, form without textures, normals, back faces, UV layout. It changes nothing — it only shows." }
+          { tag: "Browser · the 3D Model QC's desk", h: "ModelChecker", p: "Visual inspection of the finished GLB in twelve modes: material maps one at a time, form without textures, normals, back faces, UV layout, joints and part masses. It changes nothing — it only shows." }
         ]},
         { t: "shots", v: [
           { src: "img/packshoter-main.png", cap: "Packshoter in 3ds Max: camera and light sets, floor setup, pivot placement, the error list with its FIX buttons, the material builder and Detacher" },
@@ -673,10 +685,12 @@ CONTENT.en = {
           ["Names and suffixes", "Uniqueness, numeric suffixes with no gaps, name length, ASCII only, the relationship between material and object names — under the old convention they match, under the SC scheme they are tied differently"],
           ["Geometry", "Scale, modifiers and animation, XRefs, empty geometry, helper transforms, groups (not permitted)"],
           ["Pivots", "The model pivot against the bounding box, helper and camera pivots, bulb geometry pivots"],
+          ["Joints (SC)", "Placement and number of joint helpers in groups; the joint name: type, axis, limits, parent"],
           ["Polygon count", "The counter: five million and above is an error"],
-          ["UVs", "Three separate sets of checks — for new geometry, for legacy geometry and for the SC scheme; stretching and tile scale"],
+          ["UVs", "Flipped and overlapping polygons, padding, texel density, going outside 0–1; separate sets for new geometry, legacy geometry and the SC scheme"],
           ["Smoothing groups", "Present and correct across all geometry"],
           ["Materials", "Base validation, assignment to objects, the presence of AO, material names"],
+          ["Mass (SC)", "The physical material in the material name and its presence in the density table; closed, correctly oriented geometry"],
           ["Material parameters", "Base Weight, Reflection Color, IOR, anisotropy, scattering, coating, transparency, Bump Amount"],
           ["Texture slots", "Gamma, blur, blur offset, U/V coordinates — separately for each of the ten slots"],
           ["Normal Bump", "The multiplier, the Tangent method, the red and green channel flips"],
@@ -694,7 +708,7 @@ CONTENT.en = {
         { t: "h3", v: "What it produces" },
         { t: "list", v: [
           "<b>The scene archive</b> — a ZIP holding the scene, its textures, the preview and the exports, ready to be handed over.",
-          "<b>The GLB</b> — the model for viewing in a browser, re-exported at every packaging run.",
+          "<b>The GLB</b> — the model for viewing in a browser, re-exported at every packaging run by Packshoter's own exporter; it carries the mass of each part.",
           "<b>The preview</b> — a 1000×750 PNG for the model record."
         ]},
 
@@ -709,7 +723,11 @@ CONTENT.en = {
           ["Detacher", "Breaks a model into its component parts according to set rules"],
           ["Material Maker", "Builds materials to the standard"],
           ["Renaming to the convention", "Brings scene and object names into the agreed scheme"],
-          ["Rendering and preview", "AO, Checker, Shading, still and turntable rendering, floor setup"]
+          ["Rendering and preview", "AO, Checker, Shading, still and turntable rendering, floor setup"],
+          ["GLB export", "Packshoter's own exporter in C++, leaves the scene untouched; the Babylon exporter is kept as a fallback"],
+          ["UV Layout", "The unwrap of objects laid flat, with defects highlighted, without an Unwrap modifier"],
+          ["Joint Tester", "Joint sliders for an SC model: pose, motion along the chain, part intersections"],
+          ["Mass", "Part masses of an SC model from volume and material density, calculated when the scene is saved"]
         ]},
         { t: "note", v: "<b>Accessorisation.</b> A process in its own right: the model is assembled from interchangeable accessories, which then yield variants of the same product — different cushions, shelves or fittings. The checks for it exist in Packshoter and work. <b>For Physicl this process is not relevant</b> — it remains from a previous client and plays no part in the current pipeline." }
       ]
@@ -743,7 +761,10 @@ CONTENT.en = {
           "<b>Dimensions</b> — the size of the model along each axis.",
           "<b>Pivot</b> — where the anchor point sits.",
           "<b>Wireframe</b> — the mesh over the model.",
-          "<b>UV layout</b> — the unwrap in a panel of its own.",
+          "<b>UV layout</b> — the unwrap in a panel of its own, with defects and texel density highlighted.",
+          "<b>Joints</b> — joint sliders for an SC model, with intersections highlighted in the pose.",
+          "<b>Mass</b> — the model's total mass and the mass of each part in the tree.",
+          "<b>Inspection checklist</b> — ticks itself off as views are opened; a report is saved at the end.",
           "<b>Your own environment</b> — drop in an HDR and view the model under the light you need."
         ]},
         { t: "note", v: "<b>ModelChecker corrects nothing.</b> It is a viewing window, not an editor: it presents the model so that its flaws become obvious, but the decision rests with a person. Corrections are made in 3ds Max, and the model is submitted again." },
@@ -834,6 +855,9 @@ CONTENT.en = {
           ["ok", "ModelChecker: GLB inspection, twelve modes, sign-in by domain"],
           ["ok", "Upload in parts, retries on dropped connections, checksum verification"],
           ["ok", "Upload as a separate process: 3ds Max may be closed mid-transfer"],
+          ["ok", "Packshoter's own GLB exporter (Babylon kept as a fallback)"],
+          ["ok", "SC model mass: density table on the server, calculation on save, written to the scene and the GLB"],
+          ["ok", "Joints: checks, Joint Tester in 3ds Max, Joints panel in ModelChecker"],
           ["wip", "Interim storage — the scheme is agreed, the connection has not been made"],
           ["wip", "Writing records to the table — the fields are defined, the link is not built"],
           ["wip", "Resuming an upload after the machine restarts"],
@@ -869,7 +893,7 @@ CONTENT.en = {
       ]
     }
   ],
-  footer: ["Packshoter · internal document, 18 September 2026"]
+  footer: ["Packshoter · internal document, 13 October 2026"]
 };
 
 /* ─────────────────────────── FRANÇAIS ─────────────────────────── */
@@ -897,7 +921,7 @@ CONTENT.fr = {
       blocks: [
         { t: "cards", v: [
           { tag: "3ds Max · poste du modeleur", h: "Packshoter", p: "Construction de la scène, caméras, lumières, cuisson de l'AO, rendu de l'aperçu, contrôle de la scène, corrections automatiques, empaquetage. C'est là que le modèle est construit et mis aux normes." },
-          { tag: "Navigateur · poste du vérificateur", h: "ModelChecker", p: "Contrôle visuel du GLB final en douze modes : cartes de matériaux une à une, forme sans textures, normales, faces arrière, dépliage UV. Il ne modifie rien — il montre." }
+          { tag: "Navigateur · poste du vérificateur", h: "ModelChecker", p: "Contrôle visuel du GLB final en douze modes : cartes de matériaux une à une, forme sans textures, normales, faces arrière, dépliage UV, articulations et masse des pièces. Il ne modifie rien — il montre." }
         ]},
         { t: "shots", v: [
           { src: "img/packshoter-main.png", cap: "Packshoter dans 3ds Max : jeux de caméras et d'éclairage, réglage du sol, placement du pivot, liste des erreurs avec ses boutons FIX, constructeur de matériaux et Detacher" },
@@ -964,10 +988,12 @@ CONTENT.fr = {
           ["Noms et suffixes", "Unicité, suffixes numériques sans trou, longueur des noms, ASCII uniquement, correspondance entre les noms de matériau et d'objet — identiques dans l'ancienne nomenclature, liés autrement dans le schéma SC"],
           ["Géométrie", "Échelle, modificateurs et animation, XRef, géométrie vide, transformations des helpers, groupes (interdits)"],
           ["Pivots", "Pivot du modèle par rapport à la boîte englobante, pivots des helpers et des caméras, pivots de la géométrie bulb"],
+          ["Articulations (SC)", "Position et nombre des helpers d'articulation dans les groupes ; nom de l'articulation : type, axe, limites, parent"],
           ["Nombre de polygones", "Le compteur : cinq millions et au-delà constituent une erreur"],
-          ["UV", "Trois jeux de contrôles distincts — géométrie nouvelle, géométrie ancienne et schéma SC ; étirements et échelle de tuile"],
+          ["UV", "Polygones retournés et superposés, marges, densité de texels, sortie du carré 0–1 ; jeux distincts pour la géométrie nouvelle, l'ancienne et le schéma SC"],
           ["Groupes de lissage", "Présents et corrects sur toute la géométrie"],
           ["Matériaux", "Validation de base, affectation aux objets, présence de l'AO, noms des matériaux"],
+          ["Masse (SC)", "Matériau physique dans le nom du matériau et sa présence dans la table des densités ; géométrie fermée et bien orientée"],
           ["Paramètres de matériau", "Base Weight, Reflection Color, IOR, anisotropie, diffusion, revêtement, transparence, Bump Amount"],
           ["Emplacements de texture", "Gamma, flou, décalage de flou, coordonnées U/V — séparément pour chacun des dix emplacements"],
           ["Normal Bump", "Le multiplicateur, la méthode Tangent, l'inversion des canaux rouge et vert"],
@@ -985,7 +1011,7 @@ CONTENT.fr = {
         { t: "h3", v: "Ce qu'il produit" },
         { t: "list", v: [
           "<b>L'archive de la scène</b> — un ZIP contenant la scène, ses textures, l'aperçu et les exports, prêt à être transmis.",
-          "<b>Le GLB</b> — le modèle destiné à la visualisation en navigateur, réexporté à chaque empaquetage.",
+          "<b>Le GLB</b> — le modèle destiné à la visualisation en navigateur, réexporté à chaque empaquetage par l'exporteur propre de Packshoter ; il contient la masse de chaque pièce.",
           "<b>L'aperçu</b> — un PNG 1000×750 pour la fiche du modèle."
         ]},
 
@@ -1000,7 +1026,11 @@ CONTENT.fr = {
           ["Detacher", "Décompose un modèle en ses parties selon des règles définies"],
           ["Material Maker", "Construit les matériaux conformément à la norme"],
           ["Renommage selon la nomenclature", "Met les noms de scène et d'objets au schéma retenu"],
-          ["Rendu et visualisation", "AO, Checker, Shading, rendu d'image et de tour complet, réglage du sol"]
+          ["Rendu et visualisation", "AO, Checker, Shading, rendu d'image et de tour complet, réglage du sol"],
+          ["Export GLB", "Exporteur propre à Packshoter, en C++, sans modifier la scène ; l'exporteur Babylon est conservé en secours"],
+          ["UV Layout", "Le dépliage des objets à plat, défauts surlignés, sans modificateur Unwrap"],
+          ["Joint Tester", "Curseurs des articulations d'un modèle SC : pose, mouvement le long de la chaîne, intersections des pièces"],
+          ["Masse", "Masse des pièces d'un modèle SC à partir du volume et de la densité du matériau, calculée à l'enregistrement de la scène"]
         ]},
         { t: "note", v: "<b>Accessoirisation.</b> Un processus à part entière : le modèle est assemblé à partir d'accessoires interchangeables, dont découlent ensuite des variantes d'un même produit — coussins, étagères ou quincaillerie différents. Les contrôles correspondants existent dans Packshoter et fonctionnent. <b>Pour Physicl, ce processus n'est pas d'actualité</b> — il subsiste d'un client précédent et ne joue aucun rôle dans la chaîne actuelle." }
       ]
@@ -1034,7 +1064,10 @@ CONTENT.fr = {
           "<b>Dimensions</b> — la taille du modèle sur chaque axe.",
           "<b>Pivot</b> — l'emplacement du point d'ancrage.",
           "<b>Filaire</b> — le maillage par-dessus le modèle.",
-          "<b>Dépliage UV</b> — l'unwrap dans un panneau à part.",
+          "<b>Dépliage UV</b> — l'unwrap dans un panneau à part, avec défauts et densité de texels surlignés.",
+          "<b>Articulations</b> — curseurs des articulations d'un modèle SC, intersections surlignées dans la pose.",
+          "<b>Masse</b> — masse totale du modèle et masse de chaque pièce dans l'arbre.",
+          "<b>Checklist d'inspection</b> — se coche d'elle-même à mesure que les vues sont ouvertes ; un rapport est enregistré à la fin.",
           "<b>Environnement personnel</b> — déposez un HDR et regardez le modèle sous la lumière voulue."
         ]},
         { t: "note", v: "<b>ModelChecker ne corrige rien.</b> C'est une fenêtre d'observation, non un éditeur : il présente le modèle de sorte que ses défauts sautent aux yeux, mais la décision revient à une personne. Les corrections se font dans 3ds Max, et le modèle est livré à nouveau." },
@@ -1125,6 +1158,9 @@ CONTENT.fr = {
           ["ok", "ModelChecker : contrôle du GLB, douze modes, connexion par domaine"],
           ["ok", "Envoi par parties, reprises en cas de coupure, vérification de la somme de contrôle"],
           ["ok", "Envoi dans un processus distinct : 3ds Max peut être fermé pendant le transfert"],
+          ["ok", "Exporteur GLB propre à Packshoter (Babylon conservé en secours)"],
+          ["ok", "Masse des modèles SC : table des densités sur le serveur, calcul à l'enregistrement, écrite dans la scène et le GLB"],
+          ["ok", "Articulations : contrôles, Joint Tester dans 3ds Max, panneau Joints dans ModelChecker"],
           ["wip", "Stockage intermédiaire — le schéma est arrêté, le raccordement n'est pas fait"],
           ["wip", "Écriture des fiches dans la table — les champs sont définis, la liaison n'est pas construite"],
           ["wip", "Reprise de l'envoi après un redémarrage de la machine"],
@@ -1160,7 +1196,7 @@ CONTENT.fr = {
       ]
     }
   ],
-  footer: ["Packshoter · document interne du 18 septembre 2026"]
+  footer: ["Packshoter · document interne du 13 octobre 2026"]
 };
 
 /* ═══════════════════════ РЕНДЕР ═══════════════════════ */
